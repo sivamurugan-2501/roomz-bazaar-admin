@@ -1,0 +1,15 @@
+.portal-logo{
+	border-bottom: 1px solid #3e4d5c;
+	padding : 5px 0;
+}
+
+.portal-logo img{
+	width : 30px;
+	vertical-align : top;
+}
+
+.portal-logo span{
+	color: #8eb55b;
+    font-weight: bold;
+    font-size: 22px;
+}
