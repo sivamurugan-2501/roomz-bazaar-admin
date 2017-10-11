@@ -15,7 +15,13 @@ class CreateMasterPropType extends Migration
     {
         Schema::create('master_property_type', function (Blueprint $table) {
             $table->increments('id');
-            $table->string("name");
+            $table->string("name")->unique();
+            $table->boolean("is_parent");
+            $table->int("parent");
+            $table->int("status");
+            $table->int("created_by");
+            $table->int("update_by");
+            
             $table->timestamps();
         });
     }

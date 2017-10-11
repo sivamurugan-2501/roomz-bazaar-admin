@@ -47,9 +47,29 @@ Route::post('/update/add_update/{id}','GeneralInfoController@addUpdate');
 
 Route::get('delete/{id}','GeneralInfoController@addDelete');
 
-// new add property UI
 
-Route::get('/addTest',function(){
-	return view('portal.property.add-edit-property',["pageTitle"=>"Property Add","pageHeading" => "Add Property"]);
-})->name("add-edit-property1");
+// below route  just display list of proerty types
+Route::get("/master/property_type", function(){
+ return view("portal.master.property-type",["pageTitle"=>"Property Type","pageHeading" => "Property Type"]);
+})->name("manage-property-type")->middleware("auth");
 
+
+// below route will open same view/page with form to add new property type
+Route::get("/master/property_type/mode/{mode}", function($mode = 0){
+ return view("portal.master.property-type",["pageTitle"=>"Property Type","pageHeading" => "Property Type", "mode" => $mode]);
+})->name("add-property-type")->middleware("auth");
+
+// below route will open same view/page with form to edit selected property type
+Route::get("/master/property_type/{id}", function($id=0){
+ return view("portal.master.property-type",["pageTitle"=>"Property Type","pageHeading" => "Property Type","id"=>$id]);
+})->name("update-property-type")->middleware("auth");
+
+// below route will manage db operation of saving data, via post method
+Route::post("/master/property-type/add",
+	'MasterPropertyType_Controller@add'
+)->name("add-property-type-do");
+
+// below route will manage db operation of update and save data, via post method
+Route::post("/master/property-type/update",
+	'MasterPropertyType_Controller@update'
+)->name("update-property-type-do");

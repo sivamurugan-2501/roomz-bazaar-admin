@@ -18,7 +18,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-   	<base href="http://localhost/pro-portal/admin/public/portal/">
+   	<base href="http://localhost/pro-portal/pprht_backend/public/portal/">    
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <!-- Meta, title, CSS, favicons, etc. -->
     <meta charset="utf-8">
@@ -116,7 +116,7 @@
                         <form class="form-horizontal form-label-left" action="{{route('add-edit-property-handler')}}" method="post" id="addform_1" name="addform_1">
                          <input type="hidden" name="_token" value="{{ csrf_token() }}">
                           <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="name">Property Name<span class="required">*</span>
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="name">Property|Project|Society Name<span class="required">*</span>
                             </label>
                             <div class="col-md-6 col-sm-6 col-xs-12">
                               <input type="text" class="form-control" name="name" id="name" placeholder="">
@@ -129,7 +129,7 @@
                               <div class="dropdown">
                               	<select name="property_type" id="property_type" class="form-control">
                               	<option value="">--Select property type--</option>
-                              	<option value="1RK">1RK</option>
+                              	<option value="1RK"> </option>
                               	<option value="1BHK">1BHK</option>
                               	<option value="2BHK">2BHK</option>
                               	<option value="Apartment">Apartment</option>
@@ -139,7 +139,7 @@
                             </div>
                           </div>
                           <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="show_as">Show As<span class="required">*</span>
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="show_as">Property For<span class="required">*</span>
                             </label>
                             <div class="col-md-6 col-sm-6 col-xs-12">
                               <div class="dropdown2">
