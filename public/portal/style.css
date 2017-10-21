@@ -13,3 +13,10 @@
     font-weight: bold;
     font-size: 22px;
 }
+
+/* CSS for error, can also be used to display required fields with asterick in red color starts here */
+.error:not(:empty){
+    color: red;
+    font-size: 90%;
+}
+/* CSS for error ends here */
