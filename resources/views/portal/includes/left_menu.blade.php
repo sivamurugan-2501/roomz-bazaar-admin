@@ -34,6 +34,7 @@
                       <li><a href="{{route('add-edit-property')}}">View All</a></li>
                       <li><a href="{{route('add-edit-property')}}">Dashboard</a></li>
                     </ul>
+                    <li><a href="{{route('countries.index')}}"><i class="fa fa-globe"></i> Countries</a></li>
                   </li>
                   
                 </ul>
