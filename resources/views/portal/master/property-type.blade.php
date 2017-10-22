@@ -20,7 +20,6 @@
       $className = "col-md-6";
       $formActionURL = route("add-property-type-do");
   }
- // echo "updateId : ".$updateId; die;
 ?>
 <!DOCTYPE html>
 <html lang="en">

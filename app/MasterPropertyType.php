@@ -42,6 +42,14 @@ class MasterPropertyType extends Model
         }
     }
 
+     # get ALL active property type
+    public static function get($fields = ["name", ""]){
+         $data_map = [];
+         $typeList = MasterPropertyType::where("status",1)->orderBy("name","asc")->get();
+         return $typeList;
+    }
+
+    # fetch ALL parent property type
     public static function onlyParents(){
          $data_map = [];
          $parentTypes = MasterPropertyType::where("is_parent",1)->orderBy("name","asc")->get();
@@ -52,4 +60,27 @@ class MasterPropertyType extends Model
          }
          return $data_map;
     }
+
+    # fetch property type only non parent  with parent name
+    public static function groupByType($fields = ["id","name"]){
+        $data_map = [];
+
+        $obj = new MasterPropertyType;
+
+        //var_dump(expression)
+        $data = \DB::table($obj->table." as a")
+                            //->select("a.id","a.name as parent_name",\DB::raw("GROUP_CONCAT(b.name) as name") )
+                            ->select("b.id","a.name as parent_name","b.name as name" )
+                            ->where("a.status",1)
+                            ->where("a.is_parent",1)
+                            ->whereNotNull("b.name")
+                            ->orderBy("a.name")
+                             //->groupBy("a.name")
+                            ->leftJoin($obj->table." as b",'a.id','=','b.parent')->get();
+        //var_dump($data);
+        return $data;
+        
+    }
+
+   
 }

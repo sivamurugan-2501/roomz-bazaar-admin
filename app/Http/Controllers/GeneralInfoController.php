@@ -23,13 +23,27 @@ class GeneralInfoController extends Controller
         $generalinfo->name = $request->input('name');
         $generalinfo->property_type = $request->input('property_type');
         $generalinfo->show_as = $request->input('show_as');
-        $generalinfo->address = $request->input('address');
-        $generalinfo->state = $request->input('state');
-        $generalinfo->city = $request->input('city');
-        $generalinfo->landmark = $request->input('landmark');
-        $generalinfo->age = $request->input('age');
+        
         $generalinfo->total_floors = $request->input('total_floors');
         $generalinfo->floor_no = $request->input('floor_no');
+        $transaction_type =  (int)$request->input('transaction_type');
+        $generalinfo->transaction_type = $request->input('transaction_type');
+
+        if($transaction_type === 1){
+                $possession_type = (int)$request->input("possession_type");
+                $generalinfo->possession_type = $possession_type;
+                if($possession_type===1){
+                    $generalinfo->possession_year = $request->input('possession_year'); 
+                }
+        }elseif($transaction_type===2){
+            $generalinfo->age = $request->input('age');
+        }
+
+
+        //$generalinfo->address = $request->input('address');
+       // $generalinfo->state = $request->input('state');
+        //$generalinfo->city = $request->input('city');
+        //$generalinfo->landmark = $request->input('landmark');
 
          $generalinfo->per_square_feet =0;
         $generalinfo->tota_square_feet = 0;
@@ -51,11 +65,12 @@ class GeneralInfoController extends Controller
 
         $generalinfo->save();
         $id = $generalinfo->id;
-        if($id !=''){
+        return redirect()->route('add-edit-property',['id' =>$id, 'step'=> 1]);
+        /*if($id !=''){
             return redirect('online-property?section=1&id='.$id);
         }else{
             return redirect('online-property');
-        }
+        }*/
         
 	}
 

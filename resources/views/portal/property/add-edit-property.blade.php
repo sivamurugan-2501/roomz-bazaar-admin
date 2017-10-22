@@ -2,6 +2,9 @@
   use  App\MasterPropertyType;
   $propertyType =  App\MasterPropertyType::all();
   $propertyFor = array(1=>"PG","Sale","Rent");
+
+  $classDisabled = "disabled";
+  $classDisabled = "selected"; 
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -82,25 +85,25 @@
                     <div id="wizard" class="form_wizard wizard_horizontal">
                       <ul class="wizard_steps">
                         <li>
-                          <a href="#step-1">
+                          <a href="#step-1" class={{$classEnabled}}>
                             <span class="step_no">1</span>
                             <span class="step_descr">
-                                  Basic Info<br />
+                                  {{property.label_tab_1}}<br />
                                   <small>Start with basic</small>
                               </span>
                           </a>
                         </li>
                         <li>
-                          <a href="#step-2">
+                          <a href="#step-2" class={{$classDisabled}}>
                             <span class="step_no">2</span>
                             <span class="step_descr">
-                                Location<br />
+                                {{property.label_tab_2}}<br />
                                 <small></small>
                             </span>
                           </a>
                         </li>
                         <li>
-                          <a href="#step-3">
+                          <a href="#step-3" class={{$classDisabled}}>
                             <span class="step_no">3</span>
                             <span class="step_descr">
                                 Price & Size<br />
@@ -109,7 +112,7 @@
                           </a>
                         </li>
                         <li>
-                          <a href="#step-4">
+                          <a href="#step-4" class={{$classDisabled}}>
                             <span class="step_no">4</span>
                             <span class="step_descr">
                                 Amenities<br />

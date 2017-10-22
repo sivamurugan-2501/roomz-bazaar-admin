@@ -24,8 +24,10 @@ Route::get('/logins', function () {
 Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::get('/online-property','GeneralInfoController@addForm')->name('add-edit-property');
+Route::get('/manage-property/{id?}/{step?}','GeneralInfoController@addForm')->name('add-edit-property');
+
 Route::post('addProperty','GeneralInfoController@addInsert')->name('add-edit-property-handler');
+
 Route::post('addProperty/{id}','GeneralInfoController@addInsert1');
 Route::post('addProperty/section3/{id}','GeneralInfoController@addInsert2');
 Route::post('addProperty/section4/{id}','GeneralInfoController@addInsert3');
@@ -47,6 +49,9 @@ Route::post('/update/add_update/{id}','GeneralInfoController@addUpdate');
 
 Route::get('delete/{id}','GeneralInfoController@addDelete');
 
+/*
+--------- Below Routes are for master_property_type -----------
+*/
 
 // below route  just display list of proerty types
 Route::get("/master/property_type", function(){
@@ -73,3 +78,7 @@ Route::post("/master/property-type/add",
 Route::post("/master/property-type/update",
 	'MasterPropertyType_Controller@update'
 )->name("update-property-type-do");
+
+/*
+--------- End of Routes for master_property_type -----------
+*/

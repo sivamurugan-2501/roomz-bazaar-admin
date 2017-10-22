@@ -17,5 +17,6 @@
     */
 
 	return [
-			'baseURL' => env('baseURL','http://localhost/pro-portal/pprht_backend/public/portal/')
+			'baseURL' => env('baseURL','http://localhost/pro-portal/pprht_backend/public/portal/'),
+            'settings_posession_year' => env('posession_year_range',10)
 	];
