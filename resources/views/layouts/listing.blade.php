@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <base href="{{ env('APP_BURL') }}">
+        <base href="{{config('constants.baseURL')}}">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <!-- Meta, title, CSS, favicons, etc. -->
         <meta charset="utf-8">
@@ -43,7 +43,6 @@
                     @yield('content')
                 </div>
                 <!-- /page content -->
-
                 <!-- footer content -->
                 <footer>
                     <div class="pull-right">

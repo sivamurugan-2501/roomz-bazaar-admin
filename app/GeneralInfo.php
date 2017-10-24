@@ -7,7 +7,7 @@ use DB;
 class GeneralInfo extends Model
 {
     //
-    protected $table='general_info';
+    protected $table='property';
     protected $token ='_token';
     public $def_limit = 20;
 

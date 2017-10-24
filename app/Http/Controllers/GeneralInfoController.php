@@ -65,7 +65,7 @@ class GeneralInfoController extends Controller
 
         $generalinfo->save();
         $id = $generalinfo->id;
-        return redirect()->route('add-edit-property',['id' =>$id, 'step'=> 1]);
+        return redirect()->route('add-edit-property',[ 'id' =>$id, 'step'=> 1 ]);
         /*if($id !=''){
             return redirect('online-property?section=1&id='.$id);
         }else{

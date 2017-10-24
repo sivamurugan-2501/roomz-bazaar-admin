@@ -2,9 +2,8 @@
     use  App\MasterPropertyType;
     use  App\GeneralInfo;
     $propertyTypeList =  App\MasterPropertyType::groupByType();
+    $stateList = App\State::all();
 
-    ///App\MasterPropertyType::groupByType();
-   // var_dump($propertyTypeList);
 
     $propertyFor = array(1=>"PG","Sale","Rent");
     $id = Request::route('id');
@@ -14,12 +13,7 @@
     if(isset($id) && is_numeric($id)){
       $propertyInstance= App\GeneralInfo::get($id);
     }
-
-   /*if(isset($_GET['id'])){
-   	  $id = $_GET['id'];
-   }else{
-   	  $id = 0;
-   }*/
+    
 
    if(isset($_GET['section'])){
    	$section = $_GET['section'];
@@ -27,7 +21,7 @@
    	$section = 0;
    }
 
-   $classDisabled = "disabled";
+   $classDisabled =  "disabled";
    $classEnabled = "selected"; 
    $classHidden = "hide";
 
@@ -141,14 +135,14 @@
                         </li>
                       </ul>
 
-                      <div id="step-1">
+                      <div id="step-1" >
                         <form class="form-horizontal form-label-left" action="{{route('add-edit-property-handler')}}" method="post" id="addform_1" name="addform_1">
                          <input type="hidden" name="_token" value="{{ csrf_token() }}">
                          <input type="hidden" name="step" value=1>
                          @if(isset($id) && is_numeric($id))
                           <input type="hidden" name="id" value= {{$id}}>
                          @endif
-                          <div class="form-group">
+                          <!--div class="form-group">
                             <label class="control-label col-md-2 col-sm-2 col-xs-12" for="age">
                             </label>
                             <div class="col-md-7 col-sm-7  col-xs-12">
@@ -158,7 +152,7 @@
                                </div>
                             </div>
                           </div>
-                          <div> &nbsp; </div>
+                          <div> &nbsp; </div-->
 
                           <div class="form-group">
                             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="name">
@@ -166,7 +160,7 @@
                               <span class="required">*</span>
                             </label>
                             <div class="col-md-6 col-sm-6 col-xs-12">
-                              <input type="text" class="form-control" name="name" id="name" placeholder="" value = {{ (isset($propertyInstance->name) && $propertyInstance->name!=="" ) ? $propertyInstance->name : "" }}>
+                              <input type="text" class="form-control" name="name" id="name" placeholder="" value = '{{ (isset($propertyInstance->name) && $propertyInstance->label_name!=="" ) ? $propertyInstance->name : "" }}' >
                             </div>
                           </div>
                            <div class="form-group">
@@ -338,7 +332,7 @@
                          
                           <div> &nbsp; </div>
 	                         <input type="submit" name="submit" id="submit1" class="btn btn-success" value="Save">
-	                         <div class="buttonFinish buttonDisabled btn btn-default">Next</div>
+	                         <div class="buttonNext btn btn-success">Next</div>
 	                        <!--  <a href="#" class="buttonNext btn btn-success">Next</a >
 	                         <div class="buttonPrevious buttonDisabled btn btn-primary">Previous</div-->
                          
@@ -348,7 +342,7 @@
                       <div id="step-2" style="display: none;">
                       <form class="form-horizontal form-label-left" method="post" action="http://127.0.0.1:8000/addProperty/{{ $id }}" name="form_2" id="form_2">
                       <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                        <div class="form-group">
+                        <!--div class="form-group">
                             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="per_square_feet">Per Square Feet<span class="required">*</span>
                             </label>
                             <div class="col-md-6 col-sm-6 col-xs-12">
@@ -393,6 +387,55 @@
                               	<option value="Yes">Yes</option>
                               	<option value="No">No</option>
                               	</select>
+                              </div>
+                            </div>
+                          </div-->
+
+                          <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="address">Address<span class="required">*</span>
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                              <div class="dropdown3">
+                                <textarea name="address" id="address" class="form-control" id="address"></textarea>
+                              </div>
+                            </div>
+                          </div>
+
+                           <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="state">State<span class="required">*</span>
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                              <div class="dropdown3">
+                               
+                                <select id="state" name="state" class="form-control">
+                                   <option value="0">Select State</option>
+                                    @foreach($stateList as $eachState)
+                                    <option value=" {{$eachState->state_id}} ">{{$eachState->state_name}}</option>
+                                    @endforeach
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="city">City<span class="required">*</span>
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                              <div class="dropdown3">
+                                <select id="city" name="city" class="form-control">
+                                   <option value="0">Select City</option>
+                                    <option value="0">Test</option>
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="landmark">Landmark<span class="required">*</span>
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                              <div class="dropdown3">
+                                <input type="text" name="landmark" id="landmark" class="form-control">
                               </div>
                             </div>
                           </div>
@@ -501,7 +544,7 @@
                           </div>
                            <input type="submit" name="submit4" id="submit4" class="btn btn-success" value="Save">
 	                         <div class="buttonFinish buttonDisabled btn btn-default">Next</div>
-							 <div class="buttonPrevious buttonDisabled btn btn-primary">Previous</div>
+							             <div class="buttonPrevious buttonDisabled btn btn-primary">Previous</div>
                           </form>
                       </div> 
 
@@ -535,7 +578,35 @@
 
     <!-- iCheck -->
     <script src="vendors/iCheck/icheck.min.js"></script>
+    <!--script src="build/js/custom.min.js"></script-->
+
 	   <script>
+        $('#wizard').smartWizard({
+          // Properties
+            selected: {{ (isset($step) ? $step : 0) }},  // Selected Step, 0 = first step   
+            keyNavigation: true, // Enable/Disable key navigation(left and right keys are used if enabled)
+            enableAllSteps: false,  // Enable/Disable all steps on first load
+            transitionEffect: 'fade', // Effect on navigation, none/fade/slide/slideleft
+            contentURL:null, // specifying content url enables ajax content loading
+            contentURLData:null, // override ajax query parameters
+            contentCache:true, // cache step contents, if false content is fetched always from ajax url
+            cycleSteps: false, // cycle step navigation
+            enableFinishButton: false, // makes finish button enabled always
+            hideButtonsOnDisabled: false, // when the previous/next/finish buttons are disabled, hide them instead
+            errorSteps:[],    // array of step numbers to highlighting as error steps
+            labelNext:'Next', // label for Next button
+            labelPrevious:'Previous', // label for Previous button
+            labelFinish:'Finish',  // label for Finish button        
+            noForwardJumping:false,
+            ajaxType: 'POST',
+            // Events
+            onLeaveStep: null, // triggers when leaving a step
+            onShowStep: null,  // triggers when showing a step
+            onFinish: null,  // triggers when Finish button is clicked  
+            buttonOrder: ['finish', 'next', 'prev']  // button order, to hide a button remove it from the list
+        }); 
+
+
         $("input[name='transaction_type']").click(function(event){
             checked = $(this).is(":checked");
             if(checked == true){
@@ -581,6 +652,43 @@
                   $("#possession_year_div").addClass("hide");
               }
         }
+
+        function move_wizard(step){
+            if(step!==undefined && step!==""){
+
+            }
+        }
+
+        function fill_city(){
+          stateSelected = $("#state").val();
+          stateSelected = parseInt(stateSelected);
+          $.ajax({
+             url : "../ajax/cities/"+stateSelected,
+             method : "POST",
+             data : {"_token": "{{ csrf_token() }}"},
+             success :  function(response,status){
+                if(response!==undefined){
+                    
+                    response = JSON.parse(response);
+                    console.log("response : "+response);
+                    $("#city").find("option").not(':eq(0)').remove();
+                    $(response).each(function(key,cityObj){
+                        console.log("city : "+cityObj.city_name );
+                        optionTag = document.createElement("option");
+                        optionTag.value = cityObj.city_id;
+                        optionTag.innerHTML = cityObj.city_name;
+                        $("#city").append(optionTag);
+                    });
+                }
+             }
+          });
+        }
+
+
+
+        $("#state").change(function(){
+            fill_city();
+        });
 
         @if(isset($propertyInstance->transaction_type))
           transaction_type_action({{$propertyInstance->transaction_type}}, 1);

@@ -109,5 +109,9 @@ Route::post('/cities/insert', 'CitiesController@savedata')->name('cities.insert'
 Route::get('/cities/edit/{state_id}/{id}', 'CitiesController@addedit')->name('cities.edit');
 Route::post('/cities/update/{id}', 'CitiesController@savedata')->name('cities.update');
 Route::get('/cities/delete/{state_id}/{id}', 'CitiesController@delete')->name('cities.delete');
+
+ // Added by Siva for AJAX request
+Route::post('ajax/cities/{state_id}', 'CitiesController@ajaxCall')->name('cities.ajaxCall');
+
 /* City Master Routes Ends Here: 2017-10-21 */
 
