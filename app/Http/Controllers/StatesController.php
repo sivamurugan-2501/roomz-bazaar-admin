@@ -11,7 +11,10 @@ class StatesController extends Controller
 	private $recordStatus = 1;
 	private $primaryTable = 'state_master';
 	private $secondaryTable = 'country_master';
-
+	public function __construct(){
+		$this->middleware('auth');
+	}
+	
     // display list of states based on country parameter passed
     public function index($country_code = null){
     	// fetch all states data

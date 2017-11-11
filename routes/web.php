@@ -60,6 +60,7 @@ Route::post('/countries/insert', 'CountriesController@savedata')->name('countrie
 Route::get('/countries/edit/{id}', 'CountriesController@addedit')->name('countries.edit');
 Route::post('/countries/update/{id}', 'CountriesController@savedata')->name('countries.update');
 Route::get('/countries/delete/{id}', 'CountriesController@delete')->name('countries.delete');
+Route::post('/countries/search', 'CountriesController@search')->name('countries.search');
 /* Country Master Routes Ends Here: 2017-10-21 */
 
 /* State Master Routes Starts Here: 2017-10-21 */
@@ -69,6 +70,7 @@ Route::post('/states/insert', 'StatesController@savedata')->name('states.insert'
 Route::get('/states/edit/{country_code}/{id}', 'StatesController@addedit')->name('states.edit');
 Route::post('/states/update/{id}', 'StatesController@savedata')->name('states.update');
 Route::get('/states/delete/{country_code}/{id}', 'StatesController@delete')->name('states.delete');
+Route::post('/states/search', 'StatesController@search')->name('states.search');
 /* State Master Routes Ends Here: 2017-10-21 */
 
 /* City Master Routes Starts Here: 2017-10-21 */
@@ -78,4 +80,25 @@ Route::post('/cities/insert', 'CitiesController@savedata')->name('cities.insert'
 Route::get('/cities/edit/{state_id}/{id}', 'CitiesController@addedit')->name('cities.edit');
 Route::post('/cities/update/{id}', 'CitiesController@savedata')->name('cities.update');
 Route::get('/cities/delete/{state_id}/{id}', 'CitiesController@delete')->name('cities.delete');
+Route::post('/cities/search', 'CitiesController@search')->name('cities.search');
 /* City Master Routes Ends Here: 2017-10-21 */
+
+/* Roles Master Routes Starts Here: 2017-10-22 */
+Route::get('/roles/', 'RolesController@index')->name('roles.index');
+Route::get('/roles/add/', 'RolesController@addedit')->name('roles.add');
+Route::post('/roles/insert', 'RolesController@savedata')->name('roles.insert');
+Route::get('/roles/edit/{id}', 'RolesController@addedit')->name('roles.edit');
+Route::post('/roles/update/{id}', 'RolesController@savedata')->name('roles.update');
+Route::get('/roles/delete/{id}', 'RolesController@delete')->name('roles.delete');
+Route::post('/roles/search', 'RolesController@search')->name('roles.search');
+/* Roles Master Routes Ends Here: 2017-10-22 */
+
+/* Backend Users Master Routes Starts Here: 2017-10-22 */
+Route::get('/admin_users/', 'BackendUsersController@index')->name('backendusers.index');
+Route::get('/admin_users/add/', 'BackendUsersController@addedit')->name('backendusers.add');
+Route::post('/admin_users/insert', 'BackendUsersController@savedata')->name('backendusers.insert');
+Route::get('/admin_users/edit/{id}', 'BackendUsersController@addedit')->name('backendusers.edit');
+Route::post('/admin_users/update/{id}', 'BackendUsersController@savedata')->name('backendusers.update');
+Route::get('/admin_users/delete/{id}', 'BackendUsersController@delete')->name('backendusers.delete');
+Route::post('/admin_users/search', 'BackendUsersController@search')->name('backendusers.search');
+/* Backend Users Master Routes Ends Here: 2017-10-22 */

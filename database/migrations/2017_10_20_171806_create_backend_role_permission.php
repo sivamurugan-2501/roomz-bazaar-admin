@@ -14,9 +14,10 @@ class CreateBackendRolePermission extends Migration
     public function up()
     {
         Schema::create('backend_role_permission', function (Blueprint $table) {
-            $table->increments('role_id')->comment('Role ID');
-            $table->integer('permission_id')->nullable()->comment('Permission ID');
-            $table->index('permission_id', 'idx_permission_id');
+            $table->increments('role_permission_id')->comment('Role Permission ID');
+            $table->integer('role_id')->nullable()->comment('Role ID');
+            $table->string('permission_key')->nullable()->comment('Permission Key');
+            $table->unique(array('role_id','permission_key'), 'idx_role_id_permission_key');
             $table->tinyInteger('role_permission_status')->nullable()->default(1)->comment('Status: 0=Inactive, 1=Active');
             $table->index('role_permission_status', 'idx_role_permission_status');
             $table->integer('created_by')->nullable()->comment('User ID, who have added this permission entry against role');

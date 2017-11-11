@@ -12,7 +12,10 @@ class CitiesController extends Controller
 	private $primaryTable = 'city_master';
 	private $secondaryTable = 'state_master';
 	private $thirdTable = 'country_master';
-
+	public function __construct(){
+		$this->middleware('auth');
+	}
+	
 	// display list of cities based on state & country parameter passed
 	public function index($state_id = null){
 		// fetch all cities data
@@ -79,7 +82,7 @@ class CitiesController extends Controller
 		$postData = $request->all();
 		if( !isset($postData['city_status']) || empty($postData['city_status']) || !is_numeric($postData['city_status']) )
 		{  $postData['city_status'] = 0;  }
-
+		
 		$msgText = "City details added successfully!";
 		if( isset($id) && !empty($id) && is_numeric($id) )
 		{

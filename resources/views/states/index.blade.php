@@ -60,17 +60,17 @@
 						<td class="table-text">
 							<div>
 								@if( $state->state_status == 1 )
-									Active
+									<span class="btn btn-success btn-xs">Active&nbsp;&nbsp;&nbsp;</span>
 								@else
-									Inactive
+									<span class="btn btn-warning btn-xs">Inactive</span>
 								@endif
 							</div>
 						</td>
 						<td>
-							<a href="{{ route('states.edit', array($state->country_code, $state->state_id)) }}">Edit</a>&nbsp;
+							<a class="btn btn-info btn-xs" href="{{ route('states.edit', array($state->country_code, $state->state_id)) }}" title="Edit Record"><i class="fa fa-pencil"></i>&nbsp;Edit</a>&nbsp;
 							@if( $state->state_status == 1 )
-							<a href="{{ route('states.delete', array($state->country_code, $state->state_id)) }}" onclick="return confirm('Are you sure to delete?')">Delete</a>&nbsp;
-							<a href="{{ route('cities.index', array($state->state_id)) }}">View Cities</a>
+							<a class="btn btn-danger btn-xs" href="{{ route('states.delete', array($state->country_code, $state->state_id)) }}" onclick="return confirm('Are you sure to delete?')" title="Delete Record"><i class="fa fa-trash-o"></i>&nbsp;Delete</a>&nbsp;
+							<a class="btn btn-primary btn-xs" href="{{ route('cities.index', array($state->state_id)) }}" title="View Cities"><i class="fa fa-sitemap"></i>&nbsp;Cities</a>
 							@endif
 						</td>
 					</tr>

@@ -66,16 +66,16 @@
 						<td class="table-text">
 							<div>
 								@if( $city->city_status == 1 )
-									Active
+									<span class="btn btn-success btn-xs">Active&nbsp;&nbsp;&nbsp;</span>
 								@else
-									Inactive
+									<span class="btn btn-warning btn-xs">Inactive</span>
 								@endif
 							</div>
 						</td>
 						<td>
-							<a href="{{ route('cities.edit', array($city->state_id, $city->city_id)) }}">Edit</a>&nbsp;
+							<a class="btn btn-info btn-xs" href="{{ route('cities.edit', array($city->state_id, $city->city_id)) }}" title="Edit Record"><i class="fa fa-pencil"></i>&nbsp;Edit</a>&nbsp;
 							@if( $city->city_status == 1 )
-							<a href="{{ route('cities.delete', array($city->state_id, $city->city_id)) }}" onclick="return confirm('Are you sure to delete?')">Delete</a>
+							<a class="btn btn-danger btn-xs" href="{{ route('cities.delete', array($city->state_id, $city->city_id)) }}" onclick="return confirm('Are you sure to delete?')" title="Delete Record"><i class="fa fa-trash-o"></i>&nbsp;Delete</a>
 							@endif
 						</td>
 					</tr>
