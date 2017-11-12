@@ -17,17 +17,183 @@ class StatesController extends Controller
 	
     // display list of states based on country parameter passed
     public function index($country_code = null){
-    	// fetch all states data
-    	// $states = State::orderBy('state_name', 'asc')->get();
+		// pass states data to view and load list view
+		return view('states.index', ['states' => array(), 'country_code' => $country_code]);
+    }
+
+	public function search(Request $request){
+		// get post data
+		$postData = $request->all();
+		$country_code = null;
+		if( isset($postData['extras']) && is_array($postData['extras']) && count($postData['extras']) > 0 )
+		{
+			foreach($postData['extras'] as $e_key => $e_value)
+			{
+				switch($e_value['name'])
+				{
+					case 'country_code':
+						$country_code = $e_value['value'];
+						break;
+				}
+			}
+			unset($e_key, $e_value);
+		}
+
+		$draw = 0;
+		if( isset($postData['draw']) && !empty($postData['draw']) && is_numeric($postData['draw']) )
+		{  $draw = $postData['draw'];  }
+
+		$start = 0;
+		if( isset($postData['start']) && !empty($postData['start']) && is_numeric($postData['start']) )
+		{  $start = $postData['start'];  }
+		
+		$length = 0;
+		if( isset($postData['length']) && !empty($postData['length']) && is_numeric($postData['length']) )
+		{  $length = $postData['length'];  }
+		
+		$list_for = '';
+		if( isset($postData['list_for']) && !empty($postData['list_for']) )
+		{  $list_for = trim($postData['list_for']);  }
+		
+		$tempColumns = array();		//Will try to retrieve data from POSTED Variables
+		if( isset($postData['columns']) && count($postData['columns']) > 0 )
+		{  $tempColumns=$postData['columns'];  }
+
+		$data = array();
+		$tempFieldList = array();
+		if( isset($postData['default_column']) && !empty($postData['default_column']) )
+		{  $tempFieldList['normal'][] = $postData['default_column'];  }
+		$tempSearchFlds = array();
+
+		if( is_array($tempColumns) && count($tempColumns) > 0 )
+		{
+			foreach( $tempColumns as $tempField )
+			{
+				$tempSearchValue = $tempField['search']['value'];
+				switch ( strtolower($tempField['data']) ) {
+					case 'action':
+					case 'check_all':
+						break;
+					case 'created_on':
+						$tempFieldList['raw'][] = " DATE_FORMAT(created_at, '%d %M %Y') AS created_on ";
+						break;
+					case 'country_name':
+						$tempFieldList['normal'][] = $this->secondaryTable .'.'. $tempField['data'];
+						$tempFieldList['normal'][] = $this->secondaryTable .'.country_id';
+						if( isset($tempSearchValue) )
+						{
+							if( !empty($tempSearchValue) )
+							{  $tempSearchFlds[] = array($this->secondaryTable .'.'. $tempField['data'], 'like', '%'. $tempSearchValue .'%');  }
+						}
+						break;
+					default:
+						$tempFieldList['normal'][] = $this->primaryTable .'.'. $tempField['data'];
+						if( isset($tempSearchValue) )
+						{
+							if( strpos($tempField['data'], 'status') !== FALSE && is_numeric($tempSearchValue) )
+							{  $tempSearchFlds[] = array($this->primaryTable .'.'. $tempField['data'], '=', $tempSearchValue);  }
+							elseif( !empty($tempSearchValue) )
+							{  $tempSearchFlds[] = array($this->primaryTable .'.'. $tempField['data'], 'like', '%'. $tempSearchValue .'%');  }
+						}
+				}
+			}
+			unset($tempField);
+		}
+
+		if( !is_array($tempFieldList) || count($tempFieldList) == 0 )
+		{  $tempFieldList = array('normal' => array('*'));  }
+
+		$tempOrderList = array();
+		$tempOrderArr = array();
+		if( isset($postData['order']) && count($postData['order']) > 0 )
+		{  $tempOrderArr = $postData['order'];  }
+
+		if( is_array($tempOrderArr) && count($tempOrderArr) > 0 )
+		{
+			foreach( $tempOrderArr as $tempField )
+			{
+				if( count($tempColumns) >= $tempField['column'] )
+				{
+					switch( $tempColumns[$tempField['column']]['data'] )
+					{
+						case 'Action':
+						case 'check_all':
+							break;
+						case 'country_name':
+							$tempOrderList[$tempColumns[$this->secondaryTable .'.'.$tempField['column']]['data']] = $tempField['dir'];
+							break;
+						default:
+							$tempOrderList[$tempColumns[$tempField['column']]['data']] = $tempField['dir'];
+					}
+				}
+			}
+			unset($tempField);
+		}
     	$states = DB::table($this->primaryTable)
 					->join($this->secondaryTable, $this->primaryTable.'.country_code', '=', $this->secondaryTable.'.country_code')
 					->where(array($this->secondaryTable .'.country_code' => $country_code, $this->secondaryTable .'.country_status' => $this->recordStatus))
-					->select($this->primaryTable .'.*', $this->secondaryTable .'.country_name', $this->secondaryTable .'.country_id')
-					->orderBy($this->primaryTable .'.state_name', 'asc')->get();
+					->select($tempFieldList['normal']);
+		if( isset($tempFieldList['raw']) && is_array($tempFieldList['raw']) && !empty($tempFieldList['raw']) )
+		{  $states = $states->addSelect(DB::raw(implode(',', $tempFieldList['raw'])));  }
+		if( isset($tempSearchFlds) && is_array($tempSearchFlds) && count($tempSearchFlds) > 0 )
+		{  $states = $states->where($tempSearchFlds);  }
+		if( isset($tempOrderList) && is_array($tempOrderList) && count($tempOrderList) > 0 )
+		{
+			foreach( $tempOrderList as $tempKey => $tempField )
+			{  $states = $states->orderBy($tempKey, $tempField);  }
+			unset($tempKey, $tempField);
+		}
+		$noOfRecords = $states->count();
+		$states = $states->offset($start)->limit($length);
+		$states = $states->get();
 
-		// pass states data to view and load list view
-		return view('states.index', ['states' => $states, 'country_code' => $country_code]);
-    }
+		foreach($states as $_key => $_value)
+		{
+			$_value = (array) $_value;
+			$tempDataArray = array();
+			if( is_array($tempColumns) && count($tempColumns) > 0 )
+			{
+				$temp_rowID = 0;
+				$tempAction = '';
+				if( isset($postData['default_column']) && !empty($postData['default_column']) )
+				{
+					$temp_rowID = $_value[$postData['default_column']];
+					$tempDataArray = array_merge( $tempDataArray, array( 'DT_RowId' => $temp_rowID ) );
+				}
+				
+				foreach($tempColumns as $tempField)
+				{
+					$tempField['data'] = strtolower($tempField['data']);
+					if( strpos($tempField['data'], 'action') !== FALSE )
+					{
+						$tempAction = '<a class="btn btn-info btn-xs" href="'. route('states.edit', array($_value['country_code'], $temp_rowID)) .'" title="Edit Record"><i class="fa fa-pencil"></i>&nbsp;Edit</a>&nbsp;' . $tempAction;
+						$tempDataArray = array_merge( $tempDataArray, array( $tempField['data'] => $tempAction ) );
+					}
+					elseif( strpos($tempField['data'], 'status') !== FALSE )
+					{
+						$tempStatus = '<span class="btn btn-warning btn-xs">Inactive</span>';
+						if( isset($_value[$tempField['data']]) && !empty($_value[$tempField['data']]) )
+						{
+							$tempStatus = '<span class="btn btn-success btn-xs">Active&nbsp;&nbsp;&nbsp;</span>';
+							$tempAction .= '<a class="btn btn-danger btn-xs" href="'. route('states.delete', array($_value['country_code'], $temp_rowID)) .'" onclick="return confirm(\'Are you sure to delete?\')" title="Delete Record"><i class="fa fa-trash-o"></i>&nbsp;Delete</a>';
+							$tempAction .= '<a class="btn btn-primary btn-xs" href="'. route('cities.index', array($temp_rowID)) .'" title="View Cities"><i class="fa fa-sitemap"></i>&nbsp;Cities</a>';
+						}
+						$tempDataArray = array_merge( $tempDataArray, array( $tempField['data'] => $tempStatus ) );
+						unset($tempStatus);
+					}
+					else
+					{
+						$tempDataArray = array_merge( $tempDataArray, array( $tempField['data'] => $_value[$tempField['data']] ) );
+					}
+				}
+				unset($tempAction, $tempField);
+			}
+			$data[] = $tempDataArray;
+		}
+		unset($_key, $_value);
+
+		return json_encode(array("draw"=>$draw, "recordsFiltered"=>$noOfRecords, "recordsTotal"=> $noOfRecords, "data"=>$data));
+	}
 
 	// add form for states
 	public function addedit($country_code = null, $id = null){

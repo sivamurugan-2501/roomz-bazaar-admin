@@ -77,7 +77,7 @@
         <!-- Bootstrap Switch JS For Radio Buttons & Checkboxes -->
         <script src="{!! asset('js/bootstrap-switch.min.js') !!}" type="text/javascript"></script>
         <script type="text/javascript">
-            function create_viewTable(inputType, defaultColumn, searchURL, columnDef)
+            function create_viewTable(inputType, defaultColumn, searchURL, columnDef, extraColumns = null)
             {
                 var txtColObj = [];
                 $("#dt_viewTable > thead > tr:first th").each(function(){
@@ -144,6 +144,15 @@
                             d.list_for = inputType;
                             d.default_column = defaultColumn;
                             d._token = "{{ csrf_token() }}";
+                            if( extraColumns != null )
+                            {
+                                var extras = [];
+                                for(x in extraColumns)
+                                {
+                                    extras.push({"name":extraColumns[x][0], "value":extraColumns[x][1]});
+                                }
+                                d.extras = extras;
+                            }
                         }
                     },
                     "columns"     : txtColObj,

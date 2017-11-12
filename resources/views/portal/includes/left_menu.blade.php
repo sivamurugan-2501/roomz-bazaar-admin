@@ -35,6 +35,8 @@
                       <li><a href="{{route('add-edit-property')}}">Dashboard</a></li>
                     </ul>
                     <li><a href="{{route('countries.index')}}"><i class="fa fa-globe"></i> Countries</a></li>
+                    <li><a href="{{route('roles.index')}}"><i class="fa fa-users"></i> Roles Management</a></li>
+                    <li><a href="{{route('backendusers.index')}}"><i class="fa fa-user"></i> User Management</a></li>
                   </li>
                   
                 </ul>

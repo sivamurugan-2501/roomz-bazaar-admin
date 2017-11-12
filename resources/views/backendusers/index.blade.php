@@ -35,8 +35,8 @@
 					<table id="dt_viewTable" class="table table-bordered table-striped table-hover" style="width: 100%;">
 						<thead>
 							<tr>
-								<th data-paramid="user_name" data-searchtype="text">User Full Name</th>
-								<th data-paramid="user_email" data-searchtype="text">User Email ID</th>
+								<th data-paramid="name" data-searchtype="text">User Full Name</th>
+								<th data-paramid="email" data-searchtype="text">User Email ID</th>
 								<th data-paramid="user_status" data-searchtype="select">User Status</th>
 								<th data-paramid="created_on" data-searchtype="nosearch">Created On</th>
 								<th data-paramid="action" data-searchtype="nosearch">Action</th>
@@ -45,8 +45,8 @@
 						<tbody></tbody>
 						<tfoot>
 							<tr>
-								<th data-paramid="user_name" data-searchtype="text">User Full Name</th>
-								<th data-paramid="user_email" data-searchtype="text">User Email ID</th>
+								<th data-paramid="name" data-searchtype="text">User Full Name</th>
+								<th data-paramid="email" data-searchtype="text">User Email ID</th>
 								<th data-paramid="user_status" data-searchtype="select">User Status</th>
 								<th data-paramid="created_on" data-searchtype="nosearch">Created On</th>
 								<th data-paramid="action" data-searchtype="nosearch">Action</th>
@@ -65,7 +65,7 @@
 <script type="text/javascript">
 	$(document).ready(function(){
 		var columnDef = [{ sortable: false, targets: [2, 4], width: '10%' }];
-		create_viewTable('users_list', 'user_id', "{{ route('backendusers.search') }}", columnDef);
+		create_viewTable('users_list', 'id', "{{ route('backendusers.search') }}", columnDef);
 	});
 </script>
 @endsection

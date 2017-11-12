@@ -16,7 +16,7 @@
 	        @endif
 	    </div>
 	</div>
-	@if(!empty($cities))
+	
 	<div class="row">
 		<div class="col-md-12">
 			<div class="pull-left">
@@ -30,60 +30,49 @@
 			</div>
 		</div>
 	</div>
+	<div class="row"><div class="col-md-12">&nbsp;</div></div>
 	<div class="row">
 		<div class="col-md-12">
-			<table class="table table-striped task-table">
-				<!-- Table Headings Starts -->
-				<thead>
-					<th>City Name</th>
-					<th>State Name</th>
-					<th>State Code</th>
-					<th>Country Name</th>
-					<th>Country Code</th>
-					<th>City Status</th>
-					<th width="20%">Action</th>
-				</thead>
-				<!-- Table Headings Ends -->
-				<!-- Table Body Starts -->
-				<tbody>
-					@foreach($cities as $city)
-					<tr>
-						<td class="table-text">
-							<div>{{$city->city_name}}</div>
-						</td>
-						<td class="table-text">
-							<div>{{$city->state_name}}</div>
-						</td>
-						<td class="table-text">
-							<div>{{$city->state_code}}</div>
-						</td>
-						<td class="table-text">
-							<div>{{$city->country_name}}</div>
-						</td>
-						<td class="table-text">
-							<div>{{$city->country_code}}</div>
-						</td>
-						<td class="table-text">
-							<div>
-								@if( $city->city_status == 1 )
-									<span class="btn btn-success btn-xs">Active&nbsp;&nbsp;&nbsp;</span>
-								@else
-									<span class="btn btn-warning btn-xs">Inactive</span>
-								@endif
-							</div>
-						</td>
-						<td>
-							<a class="btn btn-info btn-xs" href="{{ route('cities.edit', array($city->state_id, $city->city_id)) }}" title="Edit Record"><i class="fa fa-pencil"></i>&nbsp;Edit</a>&nbsp;
-							@if( $city->city_status == 1 )
-							<a class="btn btn-danger btn-xs" href="{{ route('cities.delete', array($city->state_id, $city->city_id)) }}" onclick="return confirm('Are you sure to delete?')" title="Delete Record"><i class="fa fa-trash-o"></i>&nbsp;Delete</a>
-							@endif
-						</td>
-					</tr>
-					@endforeach
-				</tbody>
-				<!-- Table Body Ends -->
-			</table>
+			<div class="x_panel">
+				<div class="x_content">
+					<table id="dt_viewTable" class="table table-bordered table-striped table-hover" style="width: 100%;">
+						<thead>
+							<tr>
+								<th data-paramid="city_name" data-searchtype="text">City Name</th>
+								<th data-paramid="state_name" data-searchtype="nosearch">State Name</th>
+								<th data-paramid="state_code" data-searchtype="nosearch">State Code</th>
+								<th data-paramid="country_name" data-searchtype="nosearch">Country Name</th>
+								<th data-paramid="country_code" data-searchtype="nosearch">Country Code</th>
+								<th data-paramid="city_status" data-searchtype="select">City Status</th>
+								<th data-paramid="action" data-searchtype="nosearch">Action</th>
+							</tr>
+						</thead>
+						<tbody></tbody>
+						<tfoot>
+							<tr>
+								<th data-paramid="city_name" data-searchtype="text">City Name</th>
+								<th data-paramid="state_name" data-searchtype="nosearch">State Name</th>
+								<th data-paramid="state_code" data-searchtype="nosearch">State Code</th>
+								<th data-paramid="country_name" data-searchtype="nosearch">Country Name</th>
+								<th data-paramid="country_code" data-searchtype="nosearch">Country Code</th>
+								<th data-paramid="city_status" data-searchtype="select">City Status</th>
+								<th data-paramid="action" data-searchtype="nosearch">Action</th>
+							</tr>
+						</tfoot>
+					</table>
+				</div>
+			</div>
 		</div>
 	</div>
-	@endif
+@endsection
+@section('footer_page_scripts')
+<script src="vendors/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="vendors/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+<script src="vendors/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+<script type="text/javascript">
+	$(document).ready(function(){
+		var columnDef = [{ sortable: true, targets: [2, 4], width: '10%' }, { sortable: false, targets: [5, 6], width: '10%' }];
+		create_viewTable('city_list', 'city_id', "{{ route('cities.search') }}", columnDef, [['state_id',"{{ $state_id }}"]]);
+	});
+</script>
 @endsection

@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 use App\BackendUsers;
+use App\Roles;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Session;
 use DB;
+use Mail;
 class BackendUsersController extends Controller
 {
 	private $recordStatus = 1;
-	private $primaryTable = 'backend_users';
+	private $primaryTable = 'users';
 	public function __construct(){
 		$this->middleware('auth');
 	}
@@ -169,26 +171,39 @@ class BackendUsersController extends Controller
 
 	// add form for backend(admin panel) users
 	public function addedit($id = null){
-		$backendusers_data = array('user_name' => '', 'user_email' => '', 'user_status' => 1, 'user_status_check' => '', 'user_id' => 0, 
-								   'require_password_change' => 0, 'require_password_change_check' => '', 
+		$backendusers_data = array('name' => '', 'email' => '', 'user_status' => 1, 'user_status_check' => '', 'id' => 0, 
+								   'require_password_change' => 0, 'require_password_change_check' => '', 'role_id' => 0, 'role_list' => array(), 
 								   'user_send_notification' => 0, 'user_send_notification_check' => '', 'form_url' => route('backendusers.insert'));
 		if( isset($id) && !empty($id) && is_numeric($id) )
 		{
 			$backendusers = BackendUsers::find($id);
-			if( isset($backendusers->user_name) && !empty($backendusers->user_name) )
-			{  $backendusers_data['user_name'] = $backendusers->user_name;  }
-			if( isset($backendusers->user_email) && !empty($backendusers->user_email) )
-			{  $backendusers_data['user_email'] = $backendusers->user_email;  }
+			if( isset($backendusers->name) && !empty($backendusers->name) )
+			{  $backendusers_data['name'] = $backendusers->name;  }
+			if( isset($backendusers->email) && !empty($backendusers->email) )
+			{  $backendusers_data['email'] = $backendusers->email;  }
 			if( isset($backendusers->user_status) )
 			{  $backendusers_data['user_status'] = $backendusers->user_status;  }
-			$backendusers_data['user_id'] = $id;
+			if( isset($backendusers->role_id) && !empty($backendusers->role_id) )
+			{  $backendusers_data['role_id'] = $backendusers->role_id;  }
+			$backendusers_data['id'] = $id;
 			$backendusers_data['form_url'] = route('backendusers.update', $id);
 		}
-
-		if( old('user_name') !== null )
-		{  $backendusers_data['user_name'] = old('user_name');  }
-		if( old('user_email') !== null )
-		{  $backendusers_data['user_email'] = old('user_email');  }
+		
+		$role_list = Roles::orderBy('role_name', 'asc')->where('role_status', '=', 1)->get();
+		foreach($role_list as $r_key => $r_value)
+		{
+			$flag_pre_select = '';
+			if( isset($backendusers_data['role_id']) && 
+				( ($backendusers_data['role_id'] == $r_value->role_id) || (old('role_id') !== null && (old('role_id') == $r_value->role_id)) ) )
+			{  $flag_pre_select = 'selected';  }
+			$backendusers_data['role_list'][] = array('role_id' => $r_value->role_id, 'role_name' => $r_value->role_name, 'pre_select' => $flag_pre_select);
+		}
+		unset($r_key, $r_value, $flag_pre_select);
+		
+		if( old('name') !== null )
+		{  $backendusers_data['name'] = old('name');  }
+		if( old('email') !== null )
+		{  $backendusers_data['email'] = old('email');  }
 		if( old('user_status') !== null )
 		{  $backendusers_data['user_status'] = old('user_status');  }
 		if( old('require_password_change') !== null )
@@ -207,11 +222,12 @@ class BackendUsersController extends Controller
 
 	// save data for backend(admin panel) users
 	public function savedata($id = null, Request $request){
-		$arrValidation = array('user_name' => 'required|string|max:255',
-							   'user_email' => 'required|string|email|max:191|unique:'. $this->primaryTable .',NULL,'.$id.',user_id');
+		$arrValidation = array('name' => 'required|string|max:255',
+							   'email' => 'required|string|email|max:191|unique:'. $this->primaryTable .',NULL,'.$id.',id',
+							   'role_id' => 'required');
 		if( !isset($id) || empty($id) || !is_numeric($id) )
 		{
-			$arrValidation = array_merge($arrValidation, array('user_password' => 'required|min:8'));
+			$arrValidation = array_merge($arrValidation, array('password' => 'required|min:8'));
 		}
 		// validate post data
 		$this->validate($request, $arrValidation);
@@ -222,8 +238,8 @@ class BackendUsersController extends Controller
 		{  $postData['user_status'] = 0;  }
 		if( !isset($postData['require_password_change']) || empty($postData['require_password_change']) || !is_numeric($postData['require_password_change']) )
 		{  $postData['require_password_change'] = 0;  }
-		if( isset($postData['user_password']) && !empty($postData['user_password']) )
-		{  $postData['user_password'] = bcrypt($postData['user_password']);  }
+		if( isset($postData['password']) && !empty($postData['password']) )
+		{  $postData['password'] = bcrypt($postData['password']);  }
 
 		$msgText = "User details added successfully!";
 		if( isset($id) && !empty($id) && is_numeric($id) )
@@ -236,12 +252,19 @@ class BackendUsersController extends Controller
 		{
 			// insert data
 			BackendUsers::create($postData);
-		}
-
-		if( isset($postData['user_send_notification']) && !empty($postData['user_send_notification']) && is_numeric($postData['user_send_notification']) )
-		{
-			// Send email notification to user
-			;
+			if( isset($postData['user_send_notification']) && !empty($postData['user_send_notification']) && is_numeric($postData['user_send_notification']) )
+			{
+				// Send email notification to user
+				$mailOutput = Mail::send('emails.backend_user_registration', ['user_name' => $postData['name'], 'user_password' => $request->input('password')], function($message) use ($postData) {
+					$message->to($postData['email'], $postData['name'])->subject('Welcome to property portal admin panel');
+				});
+				/*if( !$mailOutput )
+				{
+					foreach(Mail::failures() as $fail_emailID)
+					{  $msgText .= 'Email not sent to '. $fail_emailID .'<br>';  }
+				}*/
+				unset($mailOutput);
+			}
 		}
 
 		// store status message
@@ -252,7 +275,7 @@ class BackendUsersController extends Controller
     // delete data for backend users
     public function delete($id){
     	// updating user_status to inactive as 0, and deleted_at as current datetime
-    	DB::table($this->primaryTable)->where('user_id', $id)->update(array('user_status' => 0, 'deleted_at' => date('Y-m-d H:i:s')));
+    	DB::table($this->primaryTable)->where('id', $id)->update(array('user_status' => 0, 'deleted_at' => date('Y-m-d H:i:s')));
 
     	// store status message
     	Session::flash('success_msg', 'User details deleted successfully!');
