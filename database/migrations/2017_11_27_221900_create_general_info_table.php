@@ -42,7 +42,7 @@ class CreateGeneralInfoTable extends Migration
             $table->timestamps();
         });*/
 
-         Schema::table("general_info",function(Blueprint $table){
+         /*Schema::table("general_info",function(Blueprint $table){
             $table->boolean("furnishes")->default(false)->change();
             $table->string("address")->default("-")->change();
             $table->integer("state")->default(0)->change();
@@ -55,7 +55,54 @@ class CreateGeneralInfoTable extends Migration
             $table->integer("possession_type")->default(0);
             $table->integer("possession_year")->default(0);
             $table->integer('age')->default(0)->change();
+         });*/
 
+         /* Schema::table("property",function(Blueprint $table){
+            $table->renameColumn("advance_deposite","advance_deposit")->default(0)->change();
+            $table->renameColumn("rent_per_month","rent")->default(0)->change();
+         });*/
+
+         //   Schema::table("property",function(Blueprint $table){
+         //    $table->renameColumn("maintenance_include","includes_maintenance")->integer(1)->default(0)->change();
+         // });
+
+         /*Schema::table("property",function(Blueprint $table){
+            $table->boolean("includes_stamp_paper_charge")->default(0);
+            $table->float("other_charges")->default(0);
+         });*/
+
+         // Schema::table("property",function(Blueprint $table){
+         //    $table->string("address")->default("")->change();
+         //    $table->integer("no_of_bedroom")->default(0);
+         //    $table->integer("no_of_bathroom")->default(0);
+         //    $table->integer("no_of_balcony")->default(0);
+         // });
+
+         /*Schema::table("property",function(Blueprint $table){
+            $table->string("amenities")->default(null);
+         });*/
+
+         /*
+         Schema::table("property",function(Blueprint $table){
+            $table->integer("status")->default(1);
+         });
+
+        Schema::table("property",function(Blueprint $table){
+            $table->integer("for_gender")->default(0);
+         });*/
+
+         /*Schema::table("property",function(Blueprint $table){
+            $table->integer("carpet_area")->default(0)->change();
+             $table->integer("usable_area")->default(0)->change();
+             $table->decimal("total_rate",15,2)->default(0)->change();
+             $table->integer("negotiable")->default(0)->change();
+            $table->integer("includes_maintenance")->default(0)->change();
+            $table->integer("parking")->default(0)->change();
+            $table->string("amenities")->default("[]")->change();
+         });*/
+
+          Schema::table("property",function(Blueprint $table){
+            $table->decimal("maintenance_charge",15,2)->default(0);
          });
     }
 

@@ -1,178 +1,238 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <base href="http://localhost/admin/public/portal/">
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <!-- Meta, title, CSS, favicons, etc. -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<?php 
+ #$list_properties = App\GeneralInfo::where("status",1)->orderBy("name","asc")->get();
+    
+  //$list_properties_json = "";
+  $updateId =  0 ;
+  $updateData = [];
+  $showForm = "none";
+  $className = "col-md-12";
 
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.validation/1.15.1/jquery.validate.min.js"></script>
+  $formActionURL = route("add-property-type-do");
   
-    <title>Property View</title>
+  if(isset($id) && $id>0){
+      $updateId = $id;
+      $showForm = "";
+      $className = "col-md-6";
+      $formActionURL = route("update-master-amenities-do");
+  }elseif(isset($mode) && $mode==1){
+      $showForm = "";
+      $className = "col-md-6";
+      $formActionURL = route("add-master-amenities-do");
+  }
+  $errorMessages = [];
+  foreach($errors->all() as $key=>$error){
+      //echo $key. " = ". $error;
+      $errorMessages[$key] = $error; 
+  }
+?>
 
-    <!-- Bootstrap -->
-    <link href="vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link href="vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
-    <!-- NProgress -->
-    <link href="vendors/nprogress/nprogress.css" rel="stylesheet">
-    <!-- Custom Theme Style -->
-    <link href="build/css/custom.min.css" rel="stylesheet">
-     <!-- iCheck -->
-    <link href="vendors/iCheck/skins/flat/green.css" rel="stylesheet">
+@extends('layouts.listing')
+
+@section("pageTitle")
+  {{__("amenities.title")}}
+@endsection
+
+
+@section('additional_css_files')
+     <!-- Datatables -->
+    <link href="vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
+    <link href="vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" rel="stylesheet">
+    <link href="vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" rel="stylesheet">
+    <link href="vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
+    <link href="vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
+
     <style type="text/css">
     .error{
-      color:red;
+      color:#E85445;
+    }
+
+    input.error{
+        background: #FAEDEC;
+        border: 1px solid #E85445;
     }
     </style>
-  </head>
-<body class="nav-md">
-<input type="hidden" name="addres" id="addres" value="{{ $data->address}}">
-    <div class="container body">
-      <div class="main_container">
-        @include("portal.includes.left_menu")
-        @include("portal.includes.header")
-        <!-- page content -->
-        <div class="right_col" role="main">
-          <div class="">
-            <div class="page-title">
-              <div class="title_left">
-                <h3>Property view</h3>
-              </div>
-             
-            </div>
-            <div class="clearfix"></div>
+    <!-- Custom Theme Style created by Siva -->
+     <link href="style.css" rel="stylesheet">`
+@endsection('additional_css_files')
+@section('content')
+          <div class="row">
 
-            <div class="row">
-
-              <div class="col-md-12 col-sm-12 col-xs-12">
-                <div class="x_panel">
-                  
-                  <div class="x_content">
-                   
-                      
-                    
-                      
-                      <a href="http://127.0.0.1:8000/online-property/" class="buttonPrevious buttonDisabled btn btn-primary">Add New Property</a>
-                      <div class="foo">
-                        <h3 class="trigger active"></h3>
-                        <div class="block">
-                        <table border="" class="table table-striped table-bordered dataTable no-footer" style="width:100%;" id="datatable">
-                        <tr>
-                        <th>Name</th>
-                        <th>Property Type</th>
-                        <th>Show As</th>
-                        <th>Total SF</th>
-                            <th>Price</th>
-                            <th>Action</th>
-                            </tr>
-                            <tr>
-                            <td>{{ $data->name }}</td>
-                            <td>{{ $data->property_type }}</td>
-                            <td>{{ $data->show_as }}</td>
-                            <td>{{ $data->tota_square_feet }}SF</td>
-                            <td>{{ $data->total_rate }}</td>
-                            <td><a href="http://127.0.0.1:8000/edit/{{ $data->id }}" class="btn btn-success" role="button">Edit</a>
-                            <a href="http://127.0.0.1:8000/delete/{{ $data->id }}" class="btn btn-danger" role="button">Delete</a></td>
-                            
-                            </tr>
-                          </table>
-                        </div>
-                    </div> 
-                      <div id="map_div" style="height: 400px;">welcome to map view</div>
-
-            
-                    <!-- End SmartWizard Content -->
+            <div class="{{$className}} col-sm-12 col-xs-12">
+              @if(session("action_message"))
+                   <div class="alert alert-success alert-dismissible fade in" role="alert">
+                      {{ session('action_message') }}
                   </div>
+              @endif
+              <div class="x_panel">
+              <div class="x_content">
+                <div class="card-box table-responsive">
+                  <table id="datatable-buttons" class="table table-striped table-bordered">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Show As</th>
+                        <th>Property Type</th>
+                        <th>City</th>
+                        <th>Views</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @foreach($list_properties as $eachRow)
+                        @if($eachRow->id == $updateId)
+                          <?php
+                            $updateData["name"] = $eachRow->name;
+                            $updateData["icon_path"] = $eachRow->show_as;
+                          ?>
+                        @endif
+                        <tr>
+                        <td>{{$eachRow->name}}</td>
+                        <td>{{$eachRow->show_as}}</td>
+                        <td>{{$eachRow->property_type}}</td>
+                        <td>{{$eachRow->city}}</td>
+                        <td>
+                          0
+                        </td>
+                        <td>
+                          <a href={{route("update-master-amenities",["id"=>$eachRow->id])}}> 
+                            <i class="fa fa-pencil">&nbsp;</i>
+                          </a>
+                          <a href={{route("update-master-amenities",["id"=>$eachRow->id])}}> 
+                            <i class="fa fa-trash-o">&nbsp;</i>
+                          </a>
+
+                        </td>
+                      </tr>
+                      @endforeach
+
+                    </tbody>
+                  </table>
+                </div>
+                <a href={{route("add-master-amenities",["mode"=>"1"])}} class="btn btn-primary">Add</a>
                 </div>
               </div>
             </div>
+            <div class="col-md-6 col-xs-12" style="display:{{$showForm}}">
+              <div class="x_panel">
+                <div class="x_title">
+                  <h2>Master<small>{{__("amenities.title")}}</small></h2>
+                  <ul class="nav navbar-right panel_toolbox">
+                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                    </li>
+                    <li class="dropdown">
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                      <ul class="dropdown-menu" role="menu">
+                        <li><a href="#">Settings 1</a>
+                        </li>
+                        <li><a href="#">Settings 2</a>
+                        </li>
+                      </ul>
+                    </li>
+                    <li><a class="close-link"><i class="fa fa-close"></i></a>
+                    </li>
+                  </ul>
+                  <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                  <br />
+                  <form class="form-horizontal form-label-left input_mask" id="amenitiesForm" action={{$formActionURL}} method="post" enctype="multipart/form-data">
+                    <!-- if id (number) is present in the url, form will displayed in edit mode with  -->
+                    @if(isset($id) && $id >0)
+                      <input type="hidden" name="id" value="{{$id}}">
+                    @endif
+                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                    <div class="form-group item">
+                      <label class="control-label col-md-3 col-sm-3 col-xs-12">Name</label>
+                      <div class="col-md-9 col-sm-9 col-xs-12">
+                        <input type="text" class="form-control" name="name" id="name" placeholder="Ex. Gym" value='{{(isset($updateData["name"])) ?  $updateData["name"] : "" }}' {{ ($showForm!="none") ? "autofocus" : "" }} >
+                      </div>
+                    </div>
+                     @foreach ($errors->get('name') as $message)
+                    <div class="form-group item">
+                      <label class="control-label col-md-3 col-sm-3 col-xs-12">&nbsp;</label>
+                      <div class="col-md-9 col-sm-9 col-xs-12 error">
+                        {{$message}}
+
+                      </div>
+                    </div>
+                    <?php break; ?>}
+                    @endforeach
+                   
+                    <div class="form-group">
+                       <label class="control-label col-md-3 col-sm-3 col-xs-12">Set Icon</label>
+                      <div class="col-md-9 col-sm-9 col-xs-12">
+                             
+                              <input type="file" class="form-control" name="icon_path" id="icon_path" placeholder="File Upload" value='{{(isset($updateData["icon_path"])) ?  $updateData["icon_path"] : "" }}'>
+                      </div>
+                    </div>
+                      @foreach ($errors->get('icon_path') as $message) {
+                    <div class="form-group item">
+                      <label class="control-label col-md-3 col-sm-3 col-xs-12">&nbsp;</label>
+                      <div class="col-md-9 col-sm-9 col-xs-12 error">
+                        {{$message}}
+
+                      </div>
+                    </div>
+                    <?php break; ?>}
+                    @endforeach
+                    
+                    <div class="ln_solid"></div>
+                    <div class="form-group">
+                      <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-3">
+                        <button type="button" class="btn btn-primary">Cancel</button>
+                        <button class="btn btn-primary" type="reset">Reset</button>
+                        <button type="submit" class="btn btn-success">Submit</button>
+                      </div>
+                    </div>
+
+                  </form>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-xs-12">
+            </div>
           </div>
-        </div>
-        <!-- /page content -->
+@endsection
+@section("footer_page_scripts")
+     <script src="vendors/jQuery-Smart-Wizard/js/jquery.smartWizard.js"></script>
+    <!-- Datatables -->
+    <script src="vendors/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="vendors/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+    <script src="vendors/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+    <script src="vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js"></script>
+    <script src="vendors/datatables.net-buttons/js/buttons.flash.min.js"></script>
+    <script src="vendors/datatables.net-buttons/js/buttons.html5.min.js"></script>
+    <script src="vendors/datatables.net-buttons/js/buttons.print.min.js"></script>
+    <script src="vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
+    <script src="vendors/datatables.net-keytable/js/dataTables.keyTable.min.js"></script>
+    <script src="vendors/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js"></script>
+    <script src="vendors/datatables.net-scroller/js/dataTables.scroller.min.js"></script>
+    <script src="vendors/jszip/dist/jszip.min.js"></script>
+    <script src="vendors/pdfmake/build/pdfmake.min.js"></script>
+    <script src="vendors/pdfmake/build/vfs_fonts.js"></script>
+     <script>
+        $("#is_parent").click(function(){
+          status = $(this).is(":checked");
+          console.log("is parent : "+status);
+        });
 
-        <!-- footer content -->
-       @includeif("portal.includes.footer")
-        <!-- /footer content -->
-      </div>
-    </div>
+        $('#is_parent').on('ifChanged', function(){
+          status = $(this).is(":checked");
+          //alert(status);
+          if(status == "true"){
+              $("#parent").closest(".form-group").hide();
+          }else{
+              document.getElementById("parent").options[0].selected="selected";
+              $("#parent").closest(".form-group").show();
+          }
+          
+        });
+    </script>
+    <script type="text/javascript" src="{!! asset('js/script.js') !!}"></script>
+@endsection
 
 
-    <!-- jQuery -->
-    <!-- <script src="vendors/jquery/dist/jquery.min.js"></script> -->
-    <!-- Bootstrap -->
-    <script src="vendors/bootstrap/dist/js/bootstrap.min.js"></script>
-    <!-- FastClick -->
-    <script src="vendors/fastclick/lib/fastclick.js"></script>
-    <!-- NProgress -->
-    <script src="vendors/nprogress/nprogress.js"></script>
-    <!-- jQuery Smart Wizard -->
-    <script src="vendors/jQuery-Smart-Wizard/js/jquery.smartWizard.js"></script>
-    <!-- Custom Theme Scripts -->
-
-    <!-- iCheck -->
-    <script src="vendors/iCheck/icheck.min.js"></script>
- 
- 
-   
-
-  </body>
-</html>
-<script type="text/javascript">
-
-var map;
-var geocoder;
-var markers = new Array();
-
-
-
-$(document).on('ready', initMap);
-//alert('welcome');
-var add = $('#addres').val();
-
-function initMap() {
-  var map = new google.maps.Map(document.getElementById('map_div'), {
-    zoom: 4,
-    center: {
-      lat: -34.397,
-      lng: 150.644
-    }
-  });
-  var geocoder = new google.maps.Geocoder();
-
-  geocodeAddress(add, geocoder, map);
   
-}
+  
 
-function geocodeAddress(address, geocoder, resultsMap) {
-  geocoder.geocode({
-    'address': address
-  }, function(results, status) {
-    if (status === google.maps.GeocoderStatus.OK) {
-      resultsMap.setCenter(results[0].geometry.location);
-      var marker = new google.maps.Marker({
-        map: resultsMap,
-        position: results[0].geometry.location
-      });
-      markers.push(marker);
-      updateZoom(resultsMap);
-    } else {
-      alert('Geocode was not successful for the following reason: ' + status);
-    }
-  });
-}
-
-function updateZoom(resultsMap) {
-  var bounds = new google.maps.LatLngBounds();
-  for (i = 0; i < markers.length; i++) {
-    bounds.extend(markers[i].getPosition());
-  }
-
-  resultsMap.fitBounds(bounds);
-}
-</script>
- <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAqx8eRui1a5u9I2BCl1U9LfGogfOzZp6g&callback=initMap"
-  type="text/javascript"></script>

@@ -8,7 +8,9 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>{{ config('app.name', 'Property Portal') }}</title>
+        <!--title>{{ config('app.name', 'Property Portal') }}</title-->
+
+        <title>@yield('pageTitle', 'Property Portal')</title>
 
         <!-- Bootstrap -->
         <link href="vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -30,6 +32,9 @@
         <link href=" build/css/custom.min.css" rel="stylesheet">
         <!-- Custom Theme Style created by Siva -->
         <link href="style.css" rel="stylesheet">
+        <!-- Added by Siva : placeholder to add additional CSS files if required --> 
+        @yield('additional_css_files')
+
     </head>
     <body class="nav-md">
         <div class="container body">

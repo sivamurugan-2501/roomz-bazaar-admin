@@ -1,28 +1,38 @@
 <?php 
-  $list_propertyType = App\MasterPropertyType::where("status",1)->orderBy("name","asc")->get();
-  $parentTypes = App\MasterPropertyType::onlyParents();
-
-  //$list_propertyType_json = "";
+  $list_amenities = App\Amenities::where("status",1)->orderBy("name","asc")->get();
+  
+  //$list_amenities_json = "";
   $updateId =  0 ;
   $updateData = [];
   $showForm = "none";
   $className = "col-md-12";
 
-  $formActionURL = route("add-property-type-do");
-
+  $formActionURL = route("add-master-amenities-do");
+  
   if(isset($id) && $id>0){
       $updateId = $id;
       $showForm = "";
       $className = "col-md-6";
-      $formActionURL = route("update-property-type-do");
+      $formActionURL = route("update-master-amenities-do");
   }elseif(isset($mode) && $mode==1){
       $showForm = "";
       $className = "col-md-6";
-      $formActionURL = route("add-property-type-do");
+      $formActionURL = route("add-master-amenities-do");
+  }
+  $errorMessages = [];
+  foreach($errors->all() as $key=>$error){
+      //echo $key. " = ". $error;
+      $errorMessages[$key] = $error; 
   }
 ?>
 
 @extends('layouts.listing')
+
+@section("pageTitle")
+  {{__("amenities.title")}}
+@endsection
+
+
 @section('additional_css_files')
      <!-- Datatables -->
     <link href="vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
@@ -33,7 +43,12 @@
 
     <style type="text/css">
     .error{
-      color:red;
+      color:#E85445;
+    }
+
+    input.error{
+        background: #FAEDEC;
+        border: 1px solid #E85445;
     }
     </style>
     <!-- Custom Theme Style created by Siva -->
@@ -54,42 +69,29 @@
                   <table id="datatable-buttons" class="table table-striped table-bordered">
                     <thead>
                       <tr>
-                        <th>Type</th>
-                        <th>Show as</th>
-                        <th>Parent</th>
+                        <th>Name</th>
+                        <th>Icon</th>
                         <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
-                      @foreach($list_propertyType as $eachRow)
+                      @foreach($list_amenities as $eachRow)
                         @if($eachRow->id == $updateId)
                           <?php
                             $updateData["name"] = $eachRow->name;
-                            $updateData["parent"] = $eachRow->parent;
-                            $updateData["is_parent"] = $eachRow->is_parent;
+                            $updateData["icon_path"] = $eachRow->icon_path;
                           ?>
                         @endif
                         <tr>
                         <td>{{$eachRow->name}}</td>
                         <td>
-                          @if($eachRow->is_parent ==1)
-                            Parent
-                          @else
-                            Sub Type
-                          @endif
+                          -
                         </td>
                         <td>
-                          @if($eachRow->is_parent ==1)
-                            -
-                          @else
-                            {{ (isset($parentTypes[$eachRow->parent])) ? $parentTypes[$eachRow->parent] : "-" }}
-                          @endif
-                        </td>
-                        <td>
-                          <a href={{route("update-property-type",["id"=>$eachRow->id])}}> 
+                          <a href={{route("update-master-amenities",["id"=>$eachRow->id])}}> 
                             <i class="fa fa-pencil">&nbsp;</i>
                           </a>
-                          <a href={{route("update-property-type",["id"=>$eachRow->id])}}> 
+                          <a href={{route("update-master-amenities",["id"=>$eachRow->id])}}> 
                             <i class="fa fa-trash-o">&nbsp;</i>
                           </a>
 
@@ -100,14 +102,14 @@
                     </tbody>
                   </table>
                 </div>
-                <a href={{route("add-property-type",["mode"=>"1"])}} class="btn btn-primary">Add</a>
+                <a href={{route("add-master-amenities",["mode"=>"1"])}} class="btn btn-primary">Add</a>
                 </div>
               </div>
             </div>
             <div class="col-md-6 col-xs-12" style="display:{{$showForm}}">
               <div class="x_panel">
                 <div class="x_title">
-                  <h2>Master<small>Property Type</small></h2>
+                  <h2>Master<small>{{__("amenities.title")}}</small></h2>
                   <ul class="nav navbar-right panel_toolbox">
                     <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                     </li>
@@ -127,40 +129,46 @@
                 </div>
                 <div class="x_content">
                   <br />
-                  <form class="form-horizontal form-label-left input_mask" id="property-type" action={{$formActionURL}} method="post">
+                  <form class="form-horizontal form-label-left input_mask" id="amenitiesForm" action={{$formActionURL}} method="post" enctype="multipart/form-data">
                     <!-- if id (number) is present in the url, form will displayed in edit mode with  -->
                     @if(isset($id) && $id >0)
                       <input type="hidden" name="id" value="{{$id}}">
                     @endif
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                    <div class="form-group">
+                    <div class="form-group item">
                       <label class="control-label col-md-3 col-sm-3 col-xs-12">Name</label>
                       <div class="col-md-9 col-sm-9 col-xs-12">
-                        <input type="text" class="form-control" name="name" id="name" placeholder="Property type" value='{{(isset($updateData["name"])) ?  $updateData["name"] : "" }}' {{ ($showForm!="none") ? "autofocus" : "" }} >
+                        <input type="text" class="form-control" name="name" id="name" placeholder="Ex. Gym" value='{{(isset($updateData["name"])) ?  $updateData["name"] : "" }}' {{ ($showForm!="none") ? "autofocus" : "" }} >
                       </div>
                     </div>
-                    <div class="form-group">
-                       <label class="control-label col-md-3 col-sm-3 col-xs-12">Mark as parent</label>
-                      <div class="checkbox">
-                            <label>
-                              <input type="checkbox" class="flat" name="is_parent" id="is_parent" value=1
-                              {{ (isset($updateData['is_parent']) && $updateData['is_parent']==1) ? "checked" : "" }}
-                              > 
-                            </label>
-                      </div>
-                    </div>
+                     @foreach ($errors->get('name') as $message)
+                    <div class="form-group item">
+                      <label class="control-label col-md-3 col-sm-3 col-xs-12">&nbsp;</label>
+                      <div class="col-md-9 col-sm-9 col-xs-12 error">
+                        {{$message}}
 
-                    <div class="form-group" style="display: {{ (isset($updateData['is_parent']) && $updateData['is_parent']==1) ? "none" : '' }}">
-                      <label class="control-label col-md-3 col-sm-3 col-xs-12">Parent</label>
-                      <div class="col-md-9 col-sm-9 col-xs-12">
-                        <select class="form-control" name="parent" id="parent">
-                          <option>Choose option</option>
-                          @foreach($parentTypes as $id => $name)
-                              <option value={{$id}}>{{$name}}</option>
-                          @endforeach 
-                        </select>
                       </div>
                     </div>
+                    <?php break; ?>}
+                    @endforeach
+                   
+                    <div class="form-group">
+                       <label class="control-label col-md-3 col-sm-3 col-xs-12">Set Icon</label>
+                      <div class="col-md-9 col-sm-9 col-xs-12">
+                             
+                              <input type="file" class="form-control" name="icon_path" id="icon_path" placeholder="File Upload" value='{{(isset($updateData["icon_path"])) ?  $updateData["icon_path"] : "" }}'>
+                      </div>
+                    </div>
+                      @foreach ($errors->get('icon_path') as $message) {
+                    <div class="form-group item">
+                      <label class="control-label col-md-3 col-sm-3 col-xs-12">&nbsp;</label>
+                      <div class="col-md-9 col-sm-9 col-xs-12 error">
+                        {{$message}}
+
+                      </div>
+                    </div>
+                    <?php break; ?>}
+                    @endforeach
                     
                     <div class="ln_solid"></div>
                     <div class="form-group">

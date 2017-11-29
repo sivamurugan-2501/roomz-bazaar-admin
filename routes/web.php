@@ -24,6 +24,7 @@ Route::get('/logins', function () {
 Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 
+Route::get('/manage-property/list','GeneralInfoController@listProperty')->name('list-property');
 Route::get('/manage-property/{id?}/{step?}','GeneralInfoController@addForm')->name('add-edit-property');
 
 Route::post('addProperty','GeneralInfoController@addInsert')->name('add-edit-property-handler');
@@ -49,40 +50,48 @@ Route::post('/update/add_update/{id}','GeneralInfoController@addUpdate');
 
 Route::get('delete/{id}','GeneralInfoController@addDelete');
 
-/*
---------- Below Routes are for master_property_type -----------
-*/
+/*--------- Below Routes are for master moddules ----------------------------------------------------------------------*/
 
-// below route  just display list of proerty types
-Route::get("/master/property_type", function(){
- return view("portal.master.property-type",["pageTitle"=>"Property Type","pageHeading" => "Property Type"]);
-})->name("manage-property-type")->middleware("auth");
-
-
-// below route will open same view/page with form to add new property type
-Route::get("/master/property_type/mode/{mode}", function($mode = 0){
- return view("portal.master.property-type",["pageTitle"=>"Property Type","pageHeading" => "Property Type", "mode" => $mode]);
-})->name("add-property-type")->middleware("auth");
+		#Master Property Route ---------------------------------------------------
+		// below route  just display list of proerty types
+		Route::get("/master/property_type", function(){
+		 return view("portal.master.property-type",["pageTitle"=>"Property Type","pageHeading" => "Property Type"]);
+		})->name("manage-property-type")->middleware("auth");
 
 
-// below route will open same view/page with form to edit selected property type
-Route::get("/master/property_type/{id}", function($id=0){
- return view("portal.master.property-type",["pageTitle"=>"Property Type","pageHeading" => "Property Type","id"=>$id]);
-})->name("update-property-type")->middleware("auth");
+		// below route will open view/page with form to add new property type
+		Route::get("/master/property_type/mode/{mode}", function($mode = 0){
+		 return view("portal.master.property-type",["pageTitle"=>"Property Type","pageHeading" => "Property Type", "mode" => $mode]);
+		})->name("add-property-type")->middleware("auth");
 
-// below route will manage db operation of saving data, via post method
-Route::post("/master/property-type/add",
-	'MasterPropertyType_Controller@add'
-)->name("add-property-type-do");
 
-// below route will manage db operation of update and save data, via post method
-Route::post("/master/property-type/update",
-	'MasterPropertyType_Controller@update'
-)->name("update-property-type-do");
+		// below route will open same view/page with form to edit selected property type
+		Route::get("/master/property_type/{id}", function($id=0){
+		 return view("portal.master.property-type",["pageTitle"=>"Property Type","pageHeading" => "Property Type","id"=>$id]);
+		})->name("update-property-type")->middleware("auth");
 
-/*
---------- End of Routes for master_property_type -----------
-*/
+		// below route will manage db operation of saving data, via post method
+		Route::post("/master/property-type/add",
+			'MasterPropertyType_Controller@add'
+		)->name("add-property-type-do");
+
+		// below route will manage db operation of update and save data, via post method
+		Route::post("/master/property-type/update",
+			'MasterPropertyType_Controller@update'
+		)->name("update-property-type-do");
+		#Master Property Type Route ends here -----------------------------------------
+
+
+		#Master Amenities ---------------------------------------------------
+
+		// Route - view/page with form to add new property type
+		Route::get("/master/amenities/","Amenities_Controller@show")->name("master_amenities")->middleware('auth');
+		Route::get("/master/amenities/{mode}/","Amenities_Controller@show")->name("add-master-amenities")->middleware('auth');
+	    Route::post("/master/amenities/add/","Amenities_Controller@add")->name("add-master-amenities-do")->middleware('auth');
+	    Route::get("/master/amenities/id/{id}/","Amenities_Controller@update_form")->name("update-master-amenities")->middleware('auth');
+	    Route::post("/master/amenities/update/","Amenities_Controller@update")->name("update-master-amenities-do")->middleware('auth');
+
+/*--------- End of Routes for master modules ------------------------------------------------------------------------------*/
 
 /* Country Master Routes Starts Here: 2017-10-21 */
 Route::get('/countries/', 'CountriesController@index')->name('countries.index');
