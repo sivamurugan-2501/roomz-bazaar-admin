@@ -107,4 +107,26 @@ class CitiesController extends Controller
 		Session::flash('success_msg', 'City details deleted successfully!');
 		return redirect()->route('cities.index', $state_id);
 	}
+
+	//  clone of index function to send response for ajax request of cities
+	public function ajaxCall($state_id = null){
+		// fetch all cities data
+		$cities = DB::table($this->primaryTable)
+					->join($this->secondaryTable, $this->primaryTable.'.state_id', '=', $this->secondaryTable.'.state_id')
+					->join($this->thirdTable, $this->secondaryTable.'.country_code', '=', $this->thirdTable.'.country_code')
+					->where(array($this->secondaryTable .'.state_id' => $state_id, 
+								  $this->secondaryTable .'.state_status' => $this->recordStatus,
+								  $this->thirdTable .'.country_status' => $this->recordStatus))
+					->select($this->primaryTable .'.*', $this->secondaryTable .'.state_name', $this->secondaryTable .'.state_id', 
+							 $this->thirdTable .'.country_name', $this->secondaryTable.'.state_code', $this->thirdTable .'.country_code')
+					->orderBy($this->primaryTable .'.city_name', 'asc')->get();
+		$country_code = DB::table($this->secondaryTable)->where(array('state_id' => $state_id))->get()->first();
+		if( isset($country_code->country_code) && !empty($country_code->country_code) )
+		{  $country_code = $country_code->country_code;  }
+		else{  $country_code = "";  }
+		// pass cities data to view and load list view
+		echo $cities;
+
+		//return view('cities.index', ['cities' => $cities, 'country_code' => $country_code, 'state_id' => $state_id]);
+	}
 }

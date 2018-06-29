@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-     <base href="http://localhost/pro-portal/admin/public/portal/">
+     <base href="http://localhost/pro-portal/pprht_backend/public/portal/">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <!-- Meta, title, CSS, favicons, etc. -->
     <meta charset="utf-8">

@@ -36,6 +36,18 @@
                     </ul>
                     <li><a href="{{route('countries.index')}}"><i class="fa fa-globe"></i> Countries</a></li>
                   </li>
+
+                   <li><a><i class="fa fa-spinner"></i> Master <span class="fa fa-chevron-down"></span></a>
+                    <ul class="nav child_menu">
+                      <li>
+                        <a>Property Type</a>
+                          <ul class="nav child_menu">
+                            <li><a href="{{route('add-edit-property')}}">View</a></li>
+                            <li><a href="{{route('add-edit-property')}}">Add</a></li>
+                          </ul>
+                      </li>
+                    </ul>
+                  </li>
                   
                 </ul>
               </div>
