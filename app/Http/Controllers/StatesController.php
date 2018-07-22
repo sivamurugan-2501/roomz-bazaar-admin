@@ -20,6 +20,36 @@ class StatesController extends Controller
 		// pass states data to view and load list view
 		return view('states.index', ['states' => array(), 'country_code' => $country_code]);
     }
+    
+    public function searchcities(Request $request){
+        $err_flag = 0;
+        $err_msg = array();
+
+        // get post data
+        $postData = $request->all();
+        $arrCities = array();
+
+        if( !isset($postData['state_id']) || empty($postData['state_id']) || !is_numeric($postData['state_id']) ) {
+            $err_flag = 1;
+            $err_msg[] = 'State details not found';
+        }
+
+        if( $err_flag == 0 ) {
+            $cities_arr = DB::table('city_master')
+                         ->join('state_master', 'state_master.state_id', '=', 'city_master.state_id')
+                         ->where(array('state_master.state_id' => $postData['state_id']))
+                         ->select(array('city_master.city_id', 'city_master.city_name'))
+                         ->orderBy('city_master.city_name', 'asc')->get();
+            if( $cities_arr ) {
+                foreach($cities_arr as $city_key => $city_value) {
+                    $arrCities[] = (array) $city_value;
+                }
+                unset($city_key, $city_value);
+            }
+            unset($cities_arr);
+        }
+        echo json_encode(array('err_flag' => $err_flag, 'err_msg' => $err_msg, 'states' => $arrCities));
+    }
 
 	public function search(Request $request){
 		// get post data

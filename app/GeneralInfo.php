@@ -7,8 +7,10 @@ use DB;
 class GeneralInfo extends Model
 {
     //
-    protected $table='general_info';
+    //protected $table='property_exists(class, property)';
+    protected $table='property';
     protected $token ='_token';
+    public $def_limit = 20;
 
     static function newCreate($request)
     {
@@ -74,5 +76,30 @@ class GeneralInfo extends Model
 
     static function newDelete($id){
         DB::table('general_info')->delete($id);
+    }
+
+    /*
+    * if $id = -1 then get all data else if > 0 fetch record with that id
+    * default records limit will be set in def_limit 
+   */
+    public static function get($id=0, $limit =0){
+        $data= false;
+        $_this = new GeneralInfo;
+        if(is_numeric($id)  && $id >0 ){
+            /*$data=  App\GeneralInfo::where([ 
+                                       // ["status","=","1"],
+                                        ["id","=",$id]
+                                   ])->get();*/
+          $data=  GeneralInfo::find($id);    
+        }elseif($id==-1){
+            if(is_numeric($limit) && $limit >0 ){
+                $limit = $_this->def_limit;
+            }
+            $data = GeneralInfo::where([ 
+                                      //  ["status","=","1"]
+                                   ])->take($limit)->get();  
+        }
+        return $data;
+        
     }
 }

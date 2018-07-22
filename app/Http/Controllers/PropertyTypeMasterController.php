@@ -1,52 +1,22 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Country;
+use App\PropertyTypeMaster;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Session;
 use DB;
-class CountriesController extends Controller
+class PropertyTypeMasterController extends Controller
 {
 	public function __construct(){
 		$this->middleware('auth');
 	}
 
-	// display list of countries
+	// display list of property type master
 	public function index(){
-		// pass countries data to view and load list view
-		return view('countries.index', ['countries' => array()]);
+		// pass property type master data to view and load list view
+		return view('propertytypemaster.index', ['property_type_master' => array()]);
 	}
-
-    public function searchstates(Request $request){
-        $err_flag = 0;
-        $err_msg = array();
-
-        // get post data
-        $postData = $request->all();
-        $arrStates = array();
-
-        if( !isset($postData['country_id']) || empty($postData['country_id']) || !is_numeric($postData['country_id']) ) {
-            $err_flag = 1;
-            $err_msg[] = 'Country details not found';
-        }
-
-        if( $err_flag == 0 ) {
-            $states_arr = DB::table('state_master')
-                         ->join('country_master', 'country_master.country_code', '=', 'state_master.country_code')
-                         ->where(array('country_master.country_id' => $postData['country_id']))
-                         ->select(array('state_master.state_id', 'state_master.state_name'))
-                         ->orderBy('state_master.state_name', 'asc')->get();
-            if( $states_arr ) {
-                foreach($states_arr as $state_key => $state_value) {
-                    $arrStates[] = (array) $state_value;
-                }
-                unset($state_key, $state_value);
-            }
-            unset($states_arr);
-        }
-        echo json_encode(array('err_flag' => $err_flag, 'err_msg' => $err_msg, 'states' => $arrStates));
-    }
 
     public function search(Request $request){
         // get post data
@@ -131,25 +101,25 @@ class CountriesController extends Controller
             unset($tempField);
         }
 
-        $Country = Country::select($tempFieldList['normal']);
+        $PropertyTypeMaster = PropertyTypeMaster::select($tempFieldList['normal']);
         if( isset($tempFieldList['raw']) && is_array($tempFieldList['raw']) && !empty($tempFieldList['raw']) )
-        {  $Country = $Country->addSelect(DB::raw(implode(',', $tempFieldList['raw'])));  }
+        {  $PropertyTypeMaster = $PropertyTypeMaster->addSelect(DB::raw(implode(',', $tempFieldList['raw'])));  }
         if( isset($tempSearchFlds) && is_array($tempSearchFlds) && count($tempSearchFlds) > 0 )
-        {  $Country = $Country->where($tempSearchFlds);  }
+        {  $PropertyTypeMaster = $PropertyTypeMaster->where($tempSearchFlds);  }
         if( isset($tempOrderList) && is_array($tempOrderList) && count($tempOrderList) > 0 )
         {
             foreach( $tempOrderList as $tempKey => $tempField )
-            {  $Country = $Country->orderBy($tempKey, $tempField);  }
+            {  $PropertyTypeMaster = $PropertyTypeMaster->orderBy($tempKey, $tempField);  }
             unset($tempKey, $tempField);
         }
-        $Country = $Country->offset($start)->limit($length);
-        $Country = $Country->get();
+        $PropertyTypeMaster = $PropertyTypeMaster->offset($start)->limit($length);
+        $PropertyTypeMaster = $PropertyTypeMaster->get();
 
         if( isset($tempSearchFlds) && is_array($tempSearchFlds) && count($tempSearchFlds) > 0 )
-        {  $noOfRecords = Country::where($tempSearchFlds)->count();  }
-        else{  $noOfRecords = Country::count();  }
+        {  $noOfRecords = PropertyTypeMaster::where($tempSearchFlds)->count();  }
+        else{  $noOfRecords = PropertyTypeMaster::count();  }
 
-        foreach($Country as $_key => $_value)
+        foreach($PropertyTypeMaster as $_key => $_value)
         {
             $tempDataArray = array();
             if( is_array($tempColumns) && count($tempColumns) > 0 )
@@ -167,7 +137,7 @@ class CountriesController extends Controller
                     $tempField['data'] = strtolower($tempField['data']);
                     if( strpos($tempField['data'], 'action') !== FALSE )
                     {
-                        $tempAction = '<a class="btn btn-info btn-xs" href="'. route('countries.edit', $temp_rowID) .'" title="Edit Record"><i class="fa fa-pencil"></i>&nbsp;Edit</a>&nbsp;' . $tempAction;
+                        $tempAction = '<a class="btn btn-info btn-xs" href="'. route('propertytypemaster.edit', $temp_rowID) .'" title="Edit Record"><i class="fa fa-pencil"></i>&nbsp;Edit</a>&nbsp;' . $tempAction;
                         $tempDataArray = array_merge( $tempDataArray, array( $tempField['data'] => $tempAction ) );
                     }
                     elseif( strpos($tempField['data'], 'status') !== FALSE )
@@ -176,8 +146,7 @@ class CountriesController extends Controller
                         if( isset($_value[$tempField['data']]) && !empty($_value[$tempField['data']]) )
                         {
                             $tempStatus = '<span class="btn btn-success btn-xs">Active&nbsp;&nbsp;&nbsp;</span>';
-                            $tempAction .= '<a class="btn btn-danger btn-xs" href="'. route('countries.delete', $temp_rowID) .'" onclick="return confirm(\'Are you sure to delete?\')" title="Delete Record"><i class="fa fa-trash-o"></i>&nbsp;Delete</a>';
-                            $tempAction .= '<a class="btn btn-primary btn-xs" href="'. route('states.index', $_value['country_code']) .'" title="View States"><i class="fa fa-sitemap"></i>&nbsp;States</a>';
+                            $tempAction .= '<a class="btn btn-danger btn-xs" href="'. route('propertytypemaster.delete', $temp_rowID) .'" onclick="return confirm(\'Are you sure to delete?\')" title="Delete Record"><i class="fa fa-trash-o"></i>&nbsp;Delete</a>';
                         }
                         $tempDataArray = array_merge( $tempDataArray, array( $tempField['data'] => $tempStatus ) );
                         unset($tempStatus);
@@ -196,71 +165,66 @@ class CountriesController extends Controller
         return json_encode(array("draw"=>$draw, "recordsFiltered"=>$noOfRecords, "recordsTotal"=> $noOfRecords, "data"=>$data));
     }
 
-	// add form for countries
+	// add form for property type master
 	public function addedit($id = null){
-		$country_data = array('country_name' => '', 'country_code' => '', 'country_status' => 1, 'country_status_check' => '', 
-							  'country_id' => 0, 'form_url' => route('countries.insert'));
+		$property_type_data = array('type_name' => '', 'type_status' => 1, 'type_status_check' => '', 
+							  'type_id' => 0, 'form_url' => route('propertytypemaster.insert'));
 		if( isset($id) && !empty($id) && is_numeric($id) )
 		{
-			$countries = Country::find($id);
-			if( isset($countries->country_name) && !empty($countries->country_name) )
-			{  $country_data['country_name'] = $countries->country_name;  }
-			if( isset($countries->country_code) && !empty($countries->country_code) )
-			{  $country_data['country_code'] = $countries->country_code;  }
-			if( isset($countries->country_status) && is_numeric($countries->country_status) )
-			{  $country_data['country_status'] = $countries->country_status;  }
-			$country_data['country_id'] = $id;
-			$country_data['form_url'] = route('countries.update', $id);
+			$property_types = PropertyTypeMaster::find($id);
+			if( isset($property_types->type_name) && !empty($property_types->type_name) )
+			{  $property_type_data['type_name'] = $property_types->type_name;  }
+			if( isset($property_types->type_status) && is_numeric($property_types->type_status) )
+			{  $property_type_data['type_status'] = $property_types->type_status;  }
+			$property_type_data['type_id'] = $id;
+			$property_type_data['form_url'] = route('propertytypemaster.update', $id);
 		}
 
-		if( old('country_name') !== null )
-		{  $country_data['country_name'] = old('country_name');  }
-		if( old('country_code') !== null )
-		{  $country_data['country_code'] = old('country_code');  }
-		if( old('country_status') !== null )
-		{  $country_data['country_status'] = old('country_status');  }
-		if( isset($country_data['country_status']) && !empty($country_data['country_status']) )
-		{  $country_data['country_status_check'] = "checked";  }
-		return view('countries.addedit', ['countries' => $country_data]);
+		if( old('type_name') !== null )
+		{  $property_type_data['type_name'] = old('type_name');  }
+		if( old('type_status') !== null )
+		{  $property_type_data['type_status'] = old('type_status');  }
+		if( isset($property_type_data['type_status']) && !empty($property_type_data['type_status']) )
+		{  $property_type_data['type_status_check'] = "checked";  }
+		return view('propertytypemaster.addedit', ['propertytypemaster' => $property_type_data]);
 	}
 
-	// save data for countries
+	// save data for propertytypemaster
 	public function savedata($id = null, Request $request){
     	// validate post data
     	$this->validate($request, [
-    		'country_name' => 'required|unique:country_master,NULL,'. $id .',country_id',
-    		'country_code' => 'required|unique:country_master,NULL,'. $id .',country_id'
+    		'type_name' => 'required|unique:property_type_master,NULL,'. $id .',type_id'
 		]);
 		// get post data
 		$postData = $request->all();
-		if( !isset($postData['country_status']) || empty($postData['country_status']) || !is_numeric($postData['country_status']) )
-		{  $postData['country_status'] = 0;  }
+		if( !isset($postData['type_status']) || empty($postData['type_status']) || !is_numeric($postData['type_status']) )
+		{  $postData['type_status'] = 0;  }
 
-		$msgText = "Country details added successfully!";
+		$msgText = "Property type details added successfully!";
 		if( isset($id) && !empty($id) && is_numeric($id) )
 		{
 			// update data
-			Country::find($id)->update($postData);
-			$msgText = "Country details updated successfully!";
+			PropertyTypeMaster::find($id)->update($postData);
+			$msgText = "Property type details updated successfully!";
 		}
 		else
 		{
 			// insert data
-			Country::create($postData);
+			PropertyTypeMaster::create($postData);
 		}
 
 		// store status message
 		Session::flash('success_msg', $msgText);
-		return redirect()->route('countries.index');
+		return redirect()->route('propertytypemaster.index');
 	}
 
-	// delete data for countries
+	// delete data for propertytypemaster
 	public function delete($id){
-		// updating country_status to inactive as 0, and deleted_at as current datetime
-		DB::table('country_master')->where('country_id', $id)->update(array('country_status' => 0, 'deleted_at' => date('Y-m-d H:i:s')));
+		// updating type_status to inactive as 0, and deleted_at as current datetime
+		DB::table('property_type_master')->where('type_id', $id)->update(array('type_status' => 0, 'deleted_at' => date('Y-m-d H:i:s')));
 
 		// store status message
-		Session::flash('success_msg', 'Country details deleted successfully!');
-		return redirect()->route('countries.index');
+		Session::flash('success_msg', 'Property type details deleted successfully!');
+		return redirect()->route('propertytypemaster.index');
 	}
 }

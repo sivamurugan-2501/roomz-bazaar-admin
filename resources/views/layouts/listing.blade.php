@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <base href="{{ env('APP_BURL') }}">
+        <base href="{{ config('app.burl') }}">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <!-- Meta, title, CSS, favicons, etc. -->
         <meta charset="utf-8">
@@ -30,7 +30,13 @@
         <link href=" build/css/custom.min.css" rel="stylesheet">
         <!-- Custom Theme Style created by Siva -->
         <link href="style.css" rel="stylesheet">
+<<<<<<< HEAD
         @yield('header_page_scripts')
+=======
+        <!-- Added by Siva : placeholder to add additional CSS files if required --> 
+        @yield('additional_css_files')
+
+>>>>>>> a4d56f1030fe84cedb0f86bc46243be2ba617093
     </head>
     <body class="nav-md">
         <div class="container body">
@@ -71,7 +77,7 @@
         <script src="vendors/moment/min/moment.min.js"></script>
         <script src="vendors/bootstrap-daterangepicker/daterangepicker.js"></script>
         <!-- Custom Theme Scripts -->
-        <!--script src="build/js/custom.min.js"></script-->
+        <script src="build/js/custom.min.js"></script>
         <!-- Validation JS -->
         <script src="{!! asset('js/jquery.validate.min.js') !!}" type="text/javascript"></script>
         <!-- Bootstrap Switch JS For Radio Buttons & Checkboxes -->

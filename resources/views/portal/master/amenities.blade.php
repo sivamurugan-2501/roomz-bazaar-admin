@@ -1,13 +1,13 @@
 <?php 
- #$list_properties = App\GeneralInfo::where("status",1)->orderBy("name","asc")->get();
-    
-  //$list_properties_json = "";
+  $list_amenities = App\Amenities::where("status",1)->orderBy("name","asc")->get();
+  
+  //$list_amenities_json = "";
   $updateId =  0 ;
   $updateData = [];
   $showForm = "none";
   $className = "col-md-12";
 
-  $formActionURL = route("add-property-type-do");
+  $formActionURL = route("add-master-amenities-do");
   
   if(isset($id) && $id>0){
       $updateId = $id;
@@ -70,28 +70,22 @@
                     <thead>
                       <tr>
                         <th>Name</th>
-                        <th>Show As</th>
-                        <th>Property Type</th>
-                        <th>City</th>
-                        <th>Views</th>
+                        <th>Icon</th>
                         <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
-                      @foreach($list_properties as $eachRow)
+                      @foreach($list_amenities as $eachRow)
                         @if($eachRow->id == $updateId)
                           <?php
                             $updateData["name"] = $eachRow->name;
-                            $updateData["icon_path"] = $eachRow->show_as;
+                            $updateData["icon_path"] = $eachRow->icon_path;
                           ?>
                         @endif
                         <tr>
                         <td>{{$eachRow->name}}</td>
-                        <td>{{$eachRow->show_as}}</td>
-                        <td>{{$eachRow->property_type}}</td>
-                        <td>{{$eachRow->city}}</td>
                         <td>
-                          0
+                          -
                         </td>
                         <td>
                           <a href={{route("update-master-amenities",["id"=>$eachRow->id])}}> 
