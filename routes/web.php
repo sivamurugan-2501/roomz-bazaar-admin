@@ -168,6 +168,7 @@ Route::get('/property/edit/{id}', 'PropertyController@addedit')->name('property.
 Route::post('/property/update/{id}', 'PropertyController@savedata')->name('property.update');
 Route::get('/property/delete/{id}', 'PropertyController@delete')->name('property.delete');
 Route::post('/property/search', 'PropertyController@search')->name('property.search');
+Route::post('/property/deletepropertyimage', 'PropertyController@deletepropertyimage')->name('property.deletepropertyimage');
 /* Property Management Routes Ends Here: 2018-07-08 */
 
 /* Property Type Master Routes Starts Here: 2018-08-22 */

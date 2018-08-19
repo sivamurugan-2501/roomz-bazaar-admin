@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 use App\Property;
 use App\PropertyTypeMaster;
+use App\PropertyImages;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Session;
 use DB;
+use Storage;
 class PropertyController extends Controller
 {
 	private $recordStatus = 1;
@@ -22,6 +24,48 @@ class PropertyController extends Controller
 	public function index(){
 		// pass properties data to view and load list view
 		return view('property.index', ['property' => array()]);
+	}
+
+	// removing given image file details
+	public function deletepropertyimage(Request $request){
+		// get post data
+		$postData = $request->all();
+		$err_flag = 0;		// err_flag is 0 means no error
+		$err_msg = array();	// err_msg stores list of errors occurred during execution
+		$result = 'Not able to process your request';
+		if( !isset($postData['property_id']) || empty($postData['property_id']) || !is_numeric($postData['property_id']) ){
+			$err_flag = 1;
+			$err_msg[] = 'Property details not found';
+		}
+
+		if( !isset($postData['image_id']) || empty($postData['image_id']) || !is_numeric($postData['image_id']) ){
+			$err_flag = 1;
+			$err_msg[] = 'Image details not found';
+		}
+		else {
+			$image_details = DB::table('property_images')
+							 ->where(array('image_id' => $postData['image_id'], 'property_master_id' => $postData['property_id']))
+							 ->select(array('image_name', 'image_path', 'image_orig_name'))->get();
+			if( !count($image_details) ){
+				$err_flag = 1;
+				$err_msg[] = 'Image details are not present';
+			}
+		}
+
+		if( $err_flag == 0 ){
+			try {
+				foreach($image_details as $img){
+					Storage::delete($img->image_path . $img->image_name);
+					DB::table('property_images')->where('image_id', '=', $postData['image_id'])->delete();
+					$result = $img->image_orig_name .' deleted successfully';
+				}
+			}
+			catch(Exception $e){
+				$err_flag = 1;
+				$err_msg[] = 'Exception: '. $e->getMessage();
+			}
+		}
+		echo json_encode(array('err_flag' => $err_flag, 'err_msg' => $err_msg, 'result' => $result));
 	}
 
     public function search(Request $request){
@@ -188,7 +232,7 @@ class PropertyController extends Controller
 							  'floor_no' => '', 'per_square_feet' => '', 'total_square_feet' => '', 'carpet_area' => '', 'usable_area' => '', 
 							  'total_rate' => '', 'negotiable' => 'no', 'advance_deposite' => '', 'rent_per_month' => '', 'maintenance_include' => 'no', 
 							  'parking' => 'no', 'gym' => 'no', 'water_supply' => 'no', 'garden' => 'no', 'others' => '', 
-							  'rera_number' => '', 'property_status_check' => '', 
+							  'rera_number' => '', 'property_status_check' => '', 'property_images' => array(), 'max_property_images' => 5, 
 							  'id' => 0, 'form_url' => route('property.insert'), 'property_type_arr' => $property_type_arr, 'show_as_arr' => $show_as_arr,
 							  'arr_options' => $arr_options);
 		if( isset($id) && !empty($id) && is_numeric($id) )
@@ -250,6 +294,12 @@ class PropertyController extends Controller
 			{  $property_data['property_status'] = $property->property_status;  }
 			$property_data['id'] = $id;
 			$property_data['form_url'] = route('property.update', $id);
+
+			// retrieving images associated with this property
+			$property_data['property_images'] = DB::table('property_images')
+						   ->where(array('image_status' => $this->recordStatus, 'property_master_id' => $id))
+						   ->select(array('image_id', 'image_name', 'image_orig_name', 'image_path'))
+						   ->orderBy('property_images.image_id', 'asc')->get();
 		}
 
 		if( old('name') !== null )
@@ -365,9 +415,30 @@ class PropertyController extends Controller
     		'gym' => 'required',
     		'water_supply' => 'required',
     		'garden' => 'required',
-    		'others' => 'required|max:191'
+    		'others' => 'required|max:191',
+    		'property_images.*' => 'mimes:jpeg,bmp,png,gif|max:5120'
 		]);
 		
+		$imageData = array();
+		$imageFile = $request->file('property_images');
+		if( is_array($imageFile) && count($imageFile) > 0 ) {
+			foreach($imageFile as $_key => $_value) {
+				if( $_value->isValid() ) {
+					$path = $_value->store('public/property_images');
+					$imgDetails = array('image_path' => str_replace(basename($path), '', $path),
+										'image_orig_name' => $_value->getClientOriginalName(),
+										'image_name' => basename($path),
+										'image_size' => $_value->getClientSize(),
+										'image_mime_type' => $_value->getClientMimeType(),
+										'property_master_id' => (isset($id) ? $id : 0),
+										'image_status' => 1);
+					$imageData[] = $imgDetails;
+					unset($imgDetails);
+				}
+			}
+			unset($_key, $_value);
+		}
+
 		if( !isset($postData['property_status']) || empty($postData['property_status']) || !is_numeric($postData['property_status']) )
 		{  $postData['property_status'] = 0;  }
 
@@ -376,12 +447,23 @@ class PropertyController extends Controller
 		{
 			// update data
 			Property::find($id)->update($postData);
+			// inserting property image data
+			foreach($imageData as $image){
+				PropertyImages::create($image);
+			}
+			unset($image);
 			$msgText = "Property details updated successfully!";
 		}
 		else
 		{
 			// insert data
-			Property::create($postData);
+			$property = Property::create($postData);
+			// inserting property image data
+			foreach($imageData as $image){
+				$image['property_master_id'] = $property->id;
+				PropertyImages::create($image);
+			}
+			unset($image);
 		}
 
 		// store status message

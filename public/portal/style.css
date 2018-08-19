@@ -20,3 +20,13 @@
     font-size: 90%;
 }
 /* CSS for error ends here */
+
+/* CSS for property image preview starts here */
+.property_images_preview{
+	min-height: 300px;
+}
+.property_images_preview img{
+	width: 100px;
+	height: 100px;
+}
+/* CSS for property image preview ends here */

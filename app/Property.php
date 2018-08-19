@@ -12,4 +12,8 @@ class Property extends Model
 						   'rent_per_month', 'maintenance_include', 'parking', 'gym', 'water_supply', 'garden', 'others', 'rera_number', 'property_status'];
 	protected $primaryKey = 'id';
 	protected $table = 'property_master';
+	/*
+	public function propertyimages(){
+		return $this->hasMany('App\PropertyImages', 'property_master_id', 'image_id');
+	}*/
 }
