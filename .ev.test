@@ -1,6 +1,6 @@
 APP_NAME=Laravel
 APP_ENV=test
-APP_BASE = "http://localhost/pro-portal/admin/public/portal"
+APP_BASE = "http://localhost/pro-portal/public/portal"
 APP_KEY=base64:o2I96p43Cf5jUo0kzpyCbKwfxJwnUid9z9PvWnrv10w=
 APP_DEBUG=true
 APP_LOG_LEVEL=debug

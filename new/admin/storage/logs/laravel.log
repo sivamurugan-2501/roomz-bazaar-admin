@@ -1,0 +1,6 @@
+[2018-09-11 18:48:06] local.ERROR: Symfony\Component\Debug\Exception\FatalErrorException: Illuminate\Routing\Router::loadRoutes(): Failed opening required 'C:\wamp64_n\www\pro-portal\pprht_backend\new\admin\routes/api.php' (include_path='.;C:\php\pear') in C:\wamp64_n\www\pro-portal\pprht_backend\new\admin\vendor\laravel\framework\src\Illuminate\Routing\Router.php:327
+Stack trace:
+#0 {main}  
+[2018-09-11 19:05:41] local.ERROR: Symfony\Component\Debug\Exception\FatalErrorException: Illuminate\Routing\Router::loadRoutes(): Failed opening required 'C:\wamp64_n\www\pro-portal\pprht_backend\new\admin\routes/api.php' (include_path='.;C:\php\pear') in C:\wamp64_n\www\pro-portal\pprht_backend\new\admin\vendor\laravel\framework\src\Illuminate\Routing\Router.php:327
+Stack trace:
+#0 {main}  

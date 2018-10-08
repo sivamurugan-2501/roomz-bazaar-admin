@@ -20,27 +20,7 @@ $(document).ready(function(){
 	}
 
 	$('#submit1').click(function(){
-
-		$("#addform_1").validate({
-			rules:{
-				name: 'required',
-				property_type:
-				{
-					required:true
-				},
-				show_as:
-				{
-					required:true
-				},
-				state:'required',
-				city: 'required',
-				landmark:'required',
-				age:'required',
-				total_floors:'required',
-				floor_no:'required',
-			},
-			
-		});
+		validateTab1();
 	});
 	$('#submit2').click(function(){
 
@@ -87,8 +67,33 @@ $(document).ready(function(){
 		});
 	});
 	$('.buttonPrevious').click(function(){
-
-	var x = document.referrer;
-	document.location.href= x;
+		var x = document.referrer;
+		document.location.href= x;
 	});
+
+
+	
+
 });
+function validateTab1(){
+	$("#addform_1").validate({
+		rules:{
+			name: 'required',
+			property_type:
+			{
+				required:true
+			},
+			show_as:
+			{
+				required:true
+			},
+			state:'required',
+			city: 'required',
+			landmark:'required',
+			age:'required',
+			total_floors:'required',
+			floor_no:'required',
+		},
+		
+	});
+}

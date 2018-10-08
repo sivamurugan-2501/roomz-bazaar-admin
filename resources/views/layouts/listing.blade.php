@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <base href="{{ config('app.burl') }}">
+        <base href="http://localhost/pro-portal/pprht_backend/public/portal/">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <!-- Meta, title, CSS, favicons, etc. -->
         <meta charset="utf-8">
@@ -30,13 +30,11 @@
         <link href=" build/css/custom.min.css" rel="stylesheet">
         <!-- Custom Theme Style created by Siva -->
         <link href="style.css" rel="stylesheet">
-<<<<<<< HEAD
+
         @yield('header_page_scripts')
-=======
         <!-- Added by Siva : placeholder to add additional CSS files if required --> 
         @yield('additional_css_files')
 
->>>>>>> a4d56f1030fe84cedb0f86bc46243be2ba617093
     </head>
     <body class="nav-md">
         <div class="container body">
@@ -184,4 +182,4 @@
         </script>
         @yield('footer_page_scripts')
     </body>
-</html>
+</html>1

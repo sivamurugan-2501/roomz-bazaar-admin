@@ -1,0 +1,32 @@
+.portal-logo{
+	border-bottom: 1px solid #3e4d5c;
+	padding : 5px 0;
+}
+
+.portal-logo img{
+	width : 30px;
+	vertical-align : top;
+}
+
+.portal-logo span{
+	color: #8eb55b;
+    font-weight: bold;
+    font-size: 22px;
+}
+
+/* CSS for error, can also be used to display required fields with asterick in red color starts here */
+.error:not(:empty){
+    color: red;
+    font-size: 90%;
+}
+/* CSS for error ends here */
+
+/* CSS for property image preview starts here */
+.property_images_preview{
+	min-height: 300px;
+}
+.property_images_preview img{
+	width: 100px;
+	height: 100px;
+}
+/* CSS for property image preview ends here */

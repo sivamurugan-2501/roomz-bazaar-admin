@@ -170,7 +170,8 @@
     <!-- iCheck -->
     <script src="vendors/iCheck/icheck.min.js"></script>
     <!--script src="build/js/custom.min.js"></script-->
-
+    
+    <script type="text/javascript" src="{!! asset('js/script.js') !!}"></script>
 	   <script>
 
         $("input").on("ifClicked", function(){
@@ -193,7 +194,7 @@
             contentCache:true, // cache step contents, if false content is fetched always from ajax url
             cycleSteps: false, // cycle step navigation
             enableFinishButton: false, // makes finish button enabled always
-            hideButtonsOnDisabled: false, // when the previous/next/finish buttons are disabled, hide them instead
+            hideButtonsOnDisabled: true, // when the previous/next/finish buttons are disabled, hide them instead
             errorSteps:[],    // array of step numbers to highlighting as error steps
             labelNext:'Next', // label for Next button
             labelPrevious:'Previous', // label for Previous button
@@ -201,13 +202,13 @@
             noForwardJumping:false,
             ajaxType: 'POST',
             // Events
-            onLeaveStep: null, // triggers when leaving a step
+            onLeaveStep: validateForm, // triggers when leaving a step
             onShowStep: null,  // triggers when showing a step
             onFinish: null,  // triggers when Finish button is clicked  
             buttonOrder: ['finish', 'next', 'prev']  // button order, to hide a button remove it from the list
         }); 
 
-
+        
         $("input[name='transaction_type']").click(function(event){
             checked = $(this).is(":checked");
             if(checked == true){
@@ -337,6 +338,36 @@
             });
         });
 
+        function validateForm(obj, context){
+         alert(context.fromStep);
+        
+         $("#addform_1").submit(function(){
+            let r =$("#addform_1").validate({
+                    rules:{
+                      name: 'required',
+                      property_type:
+                      {
+                        required:true
+                      },
+                      show_as:
+                      {
+                        required:true
+                      },
+                      state:'required',
+                      city: 'required',
+                      landmark:'required',
+                      age:'required',
+                      total_floors:'required',
+                      floor_no:'required',
+                    },
+                  });
+                  console.log(r);
+            return false;
+         });
+
+         $("#addform_1").submit();
+      }
+
 
         $(".stepContainer").removeAttr("style").css("overflow-x","unset");
 
@@ -356,7 +387,7 @@
           toggle_features('{{$propertyInstance->show_as}}');
         @endif
      </script>
-      <script type="text/javascript" src="{!! asset('js/script.js') !!}"></script>
+      
   @endsection
   
 

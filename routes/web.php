@@ -128,7 +128,8 @@ Route::post('/cities/insert', 'CitiesController@savedata')->name('cities.insert'
 Route::get('/cities/edit/{state_id}/{id}', 'CitiesController@addedit')->name('cities.edit');
 Route::post('/cities/update/{id}', 'CitiesController@savedata')->name('cities.update');
 Route::get('/cities/delete/{state_id}/{id}', 'CitiesController@delete')->name('cities.delete');
-<<<<<<< HEAD
+
+
 Route::post('/cities/search', 'CitiesController@search')->name('cities.search');
 /* City Master Routes Ends Here: 2017-10-21 */
 
@@ -151,14 +152,13 @@ Route::post('/admin_users/update/{id}', 'BackendUsersController@savedata')->name
 Route::get('/admin_users/delete/{id}', 'BackendUsersController@delete')->name('backendusers.delete');
 Route::post('/admin_users/search', 'BackendUsersController@search')->name('backendusers.search');
 /* Backend Users Master Routes Ends Here: 2017-10-22 */
-=======
 
  // Added by Siva for AJAX request
 Route::post('ajax/cities/{state_id}', 'CitiesController@ajaxCall')->name('cities.ajaxCall');
 
 /* City Master Routes Ends Here: 2017-10-21 */
 
->>>>>>> a4d56f1030fe84cedb0f86bc46243be2ba617093
+
 
 /* Property Management Routes Starts Here: 2018-07-08 */
 Route::get('/property/', 'PropertyController@index')->name('property.index');

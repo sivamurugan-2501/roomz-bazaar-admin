@@ -79,7 +79,7 @@
       </label>
       <div class="col-md-2 col-sm-6 col-xs-12">
         	<input type="radio" class="flat" name="includes_maintenance" id="maintenance_yes" value=1  <?php echo ((isset($propertyInstance->includes_maintenance) && $propertyInstance->includes_maintenance==1 ) ? "checked" : ""  ) ?> > Yes
-          <input type="radio" class="flat" name="includes_maintenance" id="maintenance_no" value=0  <?php echo (( isset($propertyInstance) && $propertyInstance->includes_maintenance==0 ) ? "checked" : "" ) ?> > No
+          <input type="radio" class="flat" name="includes_maintenance" id="maintenance_no" value=0  <?php echo (( isset($propertyInstance) && isset($propertyInstance->includes_maintenance) && $propertyInstance->includes_maintenance==0 ) ? "checked" : "" ) ?> > No
       </div>
     </div>
 
