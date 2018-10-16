@@ -101,8 +101,8 @@ class GeneralInfoController extends Controller
                 //die("carpt area : ".$request->input('expected_price'));
                 $generalinfo->carpet_area = $request->input('area_carpet');
                 $generalinfo->usable_area = $request->input('area_builtUp');
-                $generalinfo->includes_maintenance = ($request->input('includes_maintenance')!==null && $request->input('includes_maintenance')!=="") ? $request->input('includes_maintenance') : 0; 
-                if($generalinfo->includes_maintenance === 0){
+                $generalinfo->maintenance_include = ($request->input('includes_maintenance')!==null && $request->input('includes_maintenance')!=="") ? $request->input('includes_maintenance') : 0; 
+                if($generalinfo->maintenance_include === 0){
                    $generalinfo->maintenance_charge =  ($request->input('maintenance_charge')!==null && $request->input('maintenance_charge')!=="") ? $request->input('maintenance_charge') : 0;
                 }
                 $generalinfo->negotiable = ($request->input('negotiable')!==null && $request->input('negotiable')!=="") ? $request->input('negotiable') : 0;
@@ -308,8 +308,16 @@ class GeneralInfoController extends Controller
         return redirect('online-property');
     }
 
-    public function listProperty(){
+    /*
+    * $scope 1= Web, 2= API
+    */
+    public function listProperty($scope=1){
         $list_properties = GeneralInfo::where("status",1)->get();
-        return view("property-view")->with("list_properties",$list_properties);
+        if($scope==1){
+            
+            return view("property-view")->with("list_properties",$list_properties);
+        }else{
+            return $list_properties;
+        }
     }
 }

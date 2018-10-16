@@ -31,10 +31,12 @@
                   <li><a><i class="fa fa-home"></i> Property <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
                       <li><a href="{{route('add-edit-property')}}">Add</a></li>
-                      <li><a href="{{route('add-edit-property')}}">View All</a></li>
+                      <li><a href="{{route('list-property')}}">View All</a></li>
                       <li><a href="{{route('add-edit-property')}}">Dashboard</a></li>
                     </ul>
-                  <li><a href="{{route('property.index')}}"><i class="fa fa-home"></i> Property</a></li>
+
+                  <!--li><a href="{{route('property.index')}}"><i class="fa fa-home"></i> Property</a></li-->
+
                   <li><a href="{{route('propertytypemaster.index')}}"><i class="fa fa-globe"></i> Property Type Master</a></li>
                     <li><a href="{{route('countries.index')}}"><i class="fa fa-globe"></i> Countries</a></li>
                     <li><a href="{{route('roles.index')}}"><i class="fa fa-users"></i> Roles Management</a></li>

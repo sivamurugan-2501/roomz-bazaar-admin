@@ -198,11 +198,12 @@
 </div>
 
 <div> &nbsp; </div>
-<input type="submit" name="submit" id="submit1" class="btn btn-success" value="Save">
-<div class="buttonNext btn btn-success">Next</div-->
-<!--  <a href="#" class="buttonNext btn btn-success">Next</a >
-<div class="buttonPrevious buttonDisabled btn btn-primary">Previous</div-->
-
+<div class="pull-right">
+  <input type="submit" name="submit" id="submit1" class="btn btn-success" value="Save"> 
+  <!--div class="buttonNext btn btn-success">Next</div>
+  <a href="#" class="buttonNext btn btn-success">Next</a >
+  <div class="buttonPrevious buttonDisabled btn btn-primary">Previous</div-->
+</div>
 </form>
 
 </div>

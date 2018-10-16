@@ -18,6 +18,14 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::post("/authenticate",function(Request $request){
-    
+    //var_dump($request);
+    if((Auth::attempt(['email' => "test@mailcatch.co", 'password' => "admin123",'user_status' => 1]) ) ) // ? "true" : "false";
+    {
+        return json_encode($request->all()) ;
+    }
 });
+
+Route::get("property-list/{scope}","GeneralInfoController@listProperty");
+
+
 
